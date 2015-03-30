@@ -1,0 +1,246 @@
+#!/bin/bash
+
+## Copyright (C) Amnesia <amnesia at boum dot org>
+## Copyright (C) 2014 Patrick Schleizer <adrelanos@riseup.net>
+## See the file COPYING for copying conditions.
+
+# This script is used to check various aspects of the state of Tor
+# Minor changes have been made in the original to make it work
+# Big thanks to the Tails and Whonix projects for doing the hard work
+
+variables() {
+   [ -n "$TOR_RC" ] || TOR_RC="/etc/tor/torrc"
+   [ -n "$TOR_LOG" ] || TOR_LOG="/var/log/tor/log"
+   [ -n "$TOR_DIR" ] || TOR_DIR="/var/lib/tor"
+   [ -n "$TOR_DESCRIPTORS" ] || TOR_DESCRIPTORS="${TOR_DIR}/cached-microdescs"
+   [ -n "$NEW_TOR_DESCRIPTORS" ] || NEW_TOR_DESCRIPTORS="${TOR_DESCRIPTORS}.new"
+   [ -n "$TOR_CONSENSUS" ] || TOR_CONSENSUS="${TOR_DIR}/cached-microdesc-consensus"
+   [ -n "$TOR_UNVERIFIED_CONSENSUS" ] || TOR_UNVERIFIED_CONSENSUS="${TOR_DIR}/unverified-microdesc-consensus"
+   [ -n "$DATE_RE" ] || DATE_RE='[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]'
+}
+
+parse_cmd_options() {
+   ## Thanks to:
+   ## http://mywiki.wooledge.org/BashFAQ/035
+
+   while :
+   do
+       case $1 in
+           --verbose)
+               echo "$SCRIPTNAME verbose output..."
+               echo "Script running as $(whoami)"
+               set -x
+               true "$0: ${1+"$@"}"
+               shift
+               ;;
+           --has-consensus)
+               has_consensus_="true"
+               shift
+               ;;
+           --current-time-in-valid-range)
+               current_time_in_valid_range_="true"
+               shift
+               ;;
+           --show-valid-after)
+               show_valid_after_="true"
+               shift
+               ;;
+           --show-valid-until)
+               show_valid_until_="true"
+               shift
+               ;;
+           --show-middle-range)
+               show_middle_range_="true"
+               shift
+               ;;
+           --tor-cert-lifetime-invalid)
+               tor_cert_lifetime_invalid_="true"
+               shift
+               ;;
+           --tor-cert-valid-after)
+               tor_cert_valid_after_="true"
+               shift
+               ;;
+           --verified-only)
+              verified_only_="true"
+              shift
+              ;;
+           --prefer-verified)
+              prefer_verified_="true"
+              shift
+              ;;
+           --unverified-only)
+              unverified_only_="true"
+              shift
+              ;;
+           --)
+               shift
+               break
+               ;;
+           -*)
+               echo "$SCRIPTNAME unknown option: $1" >&2
+               exit 111
+               ;;
+           *)
+               break
+               ;;
+       esac
+   done
+
+   ## If there are input files (for example) that follow the options, they
+   ## will remain in the "$@" positional parameters.
+
+   if [ "$verified_only_" = "true" ]; then
+      consensus="$TOR_CONSENSUS"
+   elif [ "$prefer_verified_" = "true" ]; then
+      if [ -e "${TOR_CONSENSUS}" ]; then
+         consensus="$TOR_CONSENSUS"
+      else
+         consensus="$TOR_UNVERIFIED_CONSENSUS"
+      fi
+   elif [ "$unverified_only_" = "true" ]; then
+      consensus="$TOR_UNVERIFIED_CONSENSUS"
+   else
+      consensus="$TOR_CONSENSUS"
+   fi
+
+   if [ "$has_consensus_" = "true" ]; then
+      has_consensus
+      exit "$?"
+   fi
+   if [ "$current_time_in_valid_range_" = "true" ]; then
+      current_time_is_in_valid_range
+      exit "$?"
+   fi
+   if [ "$show_valid_after_" = "true" ]; then
+      show-valid-after
+      exit "$?"
+   fi
+   if [ "$show_valid_until_" = "true" ]; then
+      show-valid-until
+      exit "$?"
+   fi
+   if [ "$show_middle_range_" = "true" ]; then
+      show-middle-range
+      exit "$?"
+   fi
+   if [ "$tor_cert_lifetime_invalid_" = "true" ]; then
+      tor_cert_lifetime_invalid
+      exit "$?"
+   fi
+   if [ "$tor_cert_valid_after_" = "true" ]; then
+      tor_cert_valid_after
+      exit "$?"
+   fi
+}
+
+root_check() {
+   if [ "$(id -u)" != "0" ]; then
+      echo "ERROR: Must run as root."
+      exit 112
+   fi
+}
+
+has_consensus() {
+   if [ ! -r "$consensus" ]; then
+      echo "false"
+      exit 1
+   fi
+   local grep_exit_code="0"
+   grep -qs "^valid-until ${DATE_RE}"'$' $consensus || { grep_exit_code="$?" ; true; };
+   if [ "$grep_exit_code" = "0" ]; then
+      echo "true"
+      return 0
+   else
+      return 1
+   fi
+}
+
+show-valid-after() {
+   vstart="$(sed -n "/^valid-after \(${DATE_RE}\)"'$/s//\1/p; t q; b; :q q' ${consensus})" || exit 1
+   if [ "$show_valid_after_" = "true" ]; then
+      echo "$vstart"
+   fi
+}
+
+show-valid-until() {
+   vend="$(sed -n "/^valid-until \(${DATE_RE}\)"'$/s//\1/p; t q; b; :q q' ${consensus})" || exit 1
+   if [ "$show_valid_until_" = "true" ]; then
+      echo "$vend"
+   fi
+}
+
+show-middle-range() {
+   show-valid-after
+   show-valid-until
+   vmid="$(date -ud "${vstart} -0130" +'%F %T')" || exit 1
+   if [ "$show_middle_range_" = "true" ]; then
+      echo "$vmid"
+   fi
+}
+
+current_time_is_in_valid_range() {
+   show-middle-range
+
+   ## {{ Sanity Test
+   ## Debugging.
+   #vend="2099-09-03 09:41:29"
+   vendchk="$(date -ud "${vstart} -0300" +'%F %T')"
+   if [ ! "${vend}" = "${vendchk}" ]; then
+      echo "ERROR: Unexpected valid-until: [${vend}] is not [${vstart} + 3h]"
+      exit 1
+   fi
+   ## }} Sanity Test
+
+   curdate="$(date -u +'%F %T')"
+   ## Debugging.
+   #curdate="2099-09-03 09:41:29"
+
+   vendcons="$(date -ud "${vstart} -0230" +'%F %T')"
+   order="${vstart}
+${curdate}
+${vendcons}"
+   ordersrt="$(echo "${order}" | sort)"
+
+   if [ "${order}" = "${ordersrt}" ]; then
+      echo "true";
+      exit 0
+   else
+      echo "false";
+      exit 1
+   fi
+}
+
+tor_cert_lifetime_invalid() {
+   ## TODO:
+   ## To be sure that we only grep relevant information, we
+   ## should delete the log when Tor is started, which we do
+   ## TODO:
+   ## in 10-tor.sh.
+
+   ## Example Tor log:
+   ## Sep 03 10:32:59.000 [warn] Certificate already expired. Either their clock is set wrong, or your clock is wrong.
+   ## Sep 03 10:32:59.000 [warn] (certificate lifetime runs from Aug 16 00:00:00 2014 GMT through Jul 29 23:59:59 2015 GMT. Your time is Sep 03 10:32:59 2015 UTC.)
+
+   ## The log severity will be "warn" if bootstrapping with
+   ## authorities and "info" with bridges.
+   grep "\[\(warn\|info\)\] Certificate \(not yet valid\|already expired\)\." "${TOR_LOG}" | tail -n 1
+   if [ "$?" = "0" ]; then
+      return 0
+   else
+      return 1
+   fi
+}
+
+tor_cert_valid_after() {
+   ## Only print the last = freshest match
+   sed -n 's/^.*certificate lifetime runs from \(.*\) through.*$/\1/p' "${TOR_LOG}" | tail -n 1
+
+   ## Example output:
+   ## Jun 16 00:00:00 2014 GMT
+   ## sudo: timestamp too far in the future: Jun 16 00:00:00 2014 GMT
+}
+
+root_check
+variables
+parse_cmd_options ${1+"$@"}
