@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Upon receiving a DCHP ip address start bitcoin node scripts
+
+if [[ "$reason" = "BOUND" ]] || [[ "$reason" = "REBOOT" ]]; then
+  /etc/node-scripts/tor-date-check.sh;
+  /etc/node-scripts/bitcoin-new-onion-address.sh;
+fi
