@@ -1,0 +1,7 @@
+### manual edit ###
+# only allow 'main' repository
+#deb http://mirrordirector.raspbian.org/raspbian/ wheezy main contrib non-free rpi
+deb http://mirrordirector.raspbian.org/raspbian/ wheezy main
+
+# Uncomment line below then 'apt-get update' to enable 'apt-get source'
+#deb-src http://mirror.ox.ac.uk/sites/archive.raspbian.org/archive/raspbian/ wheezy main contrib non-free rpi
