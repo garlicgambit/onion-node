@@ -31,7 +31,7 @@ Ok... how do I get it up and running?
 - The Raspberry Pi will now reboot
 - Login as the user 'pi'
 - On your clean Raspbian install run: 'sudo git clone https://www.github.com/garlicgambit/onion-node.git /etc/node-scripts/'
-- To install and configure your node run: 'sudo /etc/node-scripts/installation-script.sh'
+- To install and configure your node run: 'sudo /etc/node-scripts/install.sh'
 - Wait for 1 to 1.5 hours (yep, it is compiling Bitcoin from source... so be patient)
 - After the installation the system will automatically reboot. So you should be presented with a login prompt
 - Login as the user 'pi'

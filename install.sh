@@ -6,16 +6,18 @@
 # - Install Tor first, then fetch all other apt packages via Tor
 
 # Variables
-BITCOINDIR=/home/pi/.bitcoin/;
 BITCOINUSER=pi;
-SCRIPTDIR=/etc/node-scripts/;
+BITCOINDIR=/home/"$BITCOINUSER"/.bitcoin;
+SCRIPTDIR=/etc/node-scripts;
+CONFIGFILES="$SCRIPTDIR"/config-files;
+INSTALLSCRIPTS="$SCRIPTDIR"/install-scripts;
 
 # Start installation
 echo "";
 echo "The installation of a bitcoin node takes about 1 to 1.5 hours";
 sleep 4;
 echo "It assumes the system has a clean Raspbian installation, a working network connection and can do DNS lookups";
-sleep 4;
+sleep 5;
 echo "If you have that covered, you can just check back in 1 to 1.5 hours";
 sleep 10;
 echo "Alright... here we go";
@@ -23,25 +25,22 @@ echo "";
 sleep 3;
 
 
-# Go to correct directory
-cd "$SCRIPTDIR";
-
 # Create directories
 mkdir -p /root/.gnupg/;
 mkdir -p "$BITCOINDIR";
 
 # Copy files to correct locations
-cp sysctl-kernel-hardening.conf /etc/sysctl.d/;
-cp sources.list /etc/apt/;
-cp collabora.list raspi.list /etc/apt/sources.list.d/;
-cp interfaces /etc/network/;
-cp dhclient.conf /etc/dhcp/;
-cp gitconfig /root/.gitconfig;
-cp sudoers /etc/;
-cp 00-discard-dhclient.conf /etc/rsyslog.d/;
-cp gpg.conf /root/.gnupg/;
-cp hkps.pool.sks-keyservers.net.pem /etc/ssl/certs/;
-cp bitcoin.conf "$BITCOINDIR";
+cp "$CONFIGFILES"/sysctl-kernel-hardening.conf /etc/sysctl.d/;
+cp "$CONFIGFILES"/sources.list /etc/apt/;
+cp "$CONFIGFILES"/collabora.list raspi.list /etc/apt/sources.list.d/;
+cp "$CONFIGFILES"/interfaces /etc/network/;
+cp "$CONFIGFILES"/dhclient.conf /etc/dhcp/;
+cp "$CONFIGFILES"/gitconfig /root/.gitconfig;
+cp "$CONFIGFILES"/sudoers /etc/;
+cp "$CONFIGFILES"/00-discard-dhclient.conf /etc/rsyslog.d/;
+cp "$CONFIGFILES"/gpg.conf /root/.gnupg/;
+cp "$CONFIGFILES"/hkps.pool.sks-keyservers.net.pem /etc/ssl/certs/;
+cp "$CONFIGFILES"/bitcoin.conf "$BITCOINDIR";
 
 # Set correct file/folder permissions
 chmod 644 /etc/sysctl.d/sysctl-kernel-hardening.conf;
@@ -69,11 +68,11 @@ chmod 700 "$BITCOINDIR";
 chown -R "$BITCOINUSER":"$BITCOINUSER" "$BITCOINDIR";
 
 # Run iptables-config.sh to configure iptables
-./iptables-config-pre-tor.sh;
+"$INSTALLSCRIPTS"/iptables-config-pre-tor.sh;
 iptables-save > /etc/node-scripts/iptables.rules;
 
 # Remove unnecessary packages - assume yes '-y'
-./apt-remove.sh;
+"$INSTALLSCRIPTS"/apt-remove.sh;
 
 # Configure network interface to go up
 ifdown eth0;
@@ -88,10 +87,10 @@ echo "";
 sleep 120;
 
 # Install packages - assume yes '-y'
-./apt-install.sh;
+"$INSTALLSCRIPTS"/apt-install.sh;
 
 # Allow Tor proces to connect to the web
-./iptables-config.sh;
+"$INSTALLSCRIPTS"/iptables-config.sh;
 iptables-save > /etc/node-scripts/iptables.rules;
 
 # Put torrc at correct location
@@ -103,37 +102,31 @@ chown debian-tor:debian-tor /etc/tor/torrc;
 sleep 30;
 
 # Run tor-date-check
-./tor-date-check.sh;
+"$INSTALLSCRIPTS"/tor-date-check.sh;
 
 # Wait for tor circuit
 echo "Wait for Tor circuit...sleeping 120 seconds";
 sleep 120;
 
 # Download GPG keys
-./download-gpg-keys.sh;
+"$INSTALLSCRIPTS"/download-gpg-keys.sh;
 
 # Install tlsdate from source
-./install-tlsdate.sh;
-
-# Go to correct directory
-cd "$SCRIPTDIR";
+"$INSTALLSCRIPTS"/install-tlsdate.sh;
 
 # Install bitcoin from source
-./install-bitcoin.sh;
-
-# Go to correct directory
-cd "$SCRIPTDIR";
+"$INSTALLSCRIPTS"/install-bitcoin.sh;
 
 # Install bitcoin node crontabs
-./install-crontabs.sh;
+"$INSTALLSCRIPTS"/install-crontabs.sh;
 
 # Copy dhcp-script-bitcoin-node to correct location
-cp dhcp-script-bitcoin-node /etc/dhcp/dhclient-exit-hooks.d/dhcp-script-bitcoin-node;
+cp "$CONFIGFILES"/dhcp-script-bitcoin-node /etc/dhcp/dhclient-exit-hooks.d/dhcp-script-bitcoin-node;
 chmod 744 /etc/dhcp/dhclient-exit-hooks.d/dhcp-script-bitcoin-node;
 chown root:root /etc/dhcp/dhclient-exit-hooks.d/dhcp-script-bitcoin-node;
 
 # Copy unattended-upgrade files to correct location
-cp 20auto-upgrades 50unattended-upgrades /etc/apt/apt.conf.d/;
+cp "$CONFIGFILES"/20auto-upgrades "$CONFIGFILES"/50unattended-upgrades /etc/apt/apt.conf.d/;
 chmod 644 /etc/apt/apt.conf.d/20auto-upgrades /etc/apt/apt.conf.d/50unattended-upgrades;
 chown root:root /etc/apt/apt.conf.d/20auto-upgrades /etc/apt/apt.conf.d/50unattended-upgrades;
 
