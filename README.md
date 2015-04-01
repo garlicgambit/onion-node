@@ -11,12 +11,12 @@ The goal is simple:
 
 How is this done:
 - All Bitcoin traffic is routed trough the Tor network and stays inside the Tor network by leveraging Tor onion services (no use of Tor exit nodes/clearnet)
--- This creates end-to-end encrypted connections which makes the Bitcoin transactions more private
--- Traffic is mixed with the other Tor users which makes Bitcoin traffic more anonymous (you can't be anonymous on your own)
--- Plus Tor has built-in properties that make it an effective censorship circumvention tool.
+  - This creates end-to-end encrypted connections which makes the Bitcoin transactions more private
+  - Traffic is mixed with the other Tor users which makes Bitcoin traffic more anonymous (you can't be anonymous on your own)
+  - Plus Tor has built-in properties that make it an effective censorship circumvention tool.
 
 License:
-- Consider the code to be public domain. If you or your jurisdiction do not accept that then consider the code to be released under creative commons 0 - CC0. If you or your jurisdiction do not accept that... well then settle for the MIT license. What we mean to say is that you are free to copy, modify and relicense the code by all means. But don't hold us liable for any damages incurred by using or abusing the software.
+- Consider the code to be public domain. If you or your jurisdiction do not accept that then consider the code to be released under Creative Commons 0 (CC0). If you or your jurisdiction do not accept that... well then settle for the MIT license. What we mean to say is that you are free to copy, modify and relicense the code by all means. But don't hold us liable for any damages incurred by using or abusing the software.
 - Code which is copied from other projects remains under the original license.
 
 Ok... how do I get it up and running?
@@ -46,9 +46,10 @@ Like this project? Help us out! Lots of work still needs to be done and any sort
 - Contributions in all forms and sizes are greatly appreciated: ideas, comments, code, suggestions, donations, infrastructure, etc
 
 If you have any questions, comments or suggestions you can contact us at:
-jmercier@openmailbox (dot) org 
-GPG key: 0xF7698FEE3295ABB5
+jmercier@openmailbox (dot) org
+
+GPG key:
+0xF7698FEE3295ABB5
 
 Bitcoin donation address:
 1NgJbAKSx2LwHYsu1mEJLpB3hiKiBWAhzx
-
