@@ -20,6 +20,8 @@ echo "# Check every 24 hours at random interval if time of Tor is accurate and s
 echo '0  0    * * *   root   /bin/sleep $(($RANDOM \% 1435))m ; /etc/node-scripts/tor-date-check.sh; /etc/node-scripts/bitcoin-new-onion-address.sh' >> /etc/node-scripts/crontab-tmp;
 echo "# Check every 24 hours at random interval if system time is accurate" >> /etc/node-scripts/crontab-tmp;
 echo '0  0    * * *   root   /bin/sleep $(($RANDOM \% 1435))m ; /etc/node-scripts/tlsdate-script.sh' >> /etc/node-scripts/crontab-tmp;
+echo "# Randomly reboot system every 2-4 weeks - a lockfile is set when run the first time" >> /etc/node-scripts/crontab-tmp;
+echo '0  0    * * *   root   /etc/node-scripts/random-reboot.sh' >> /etc/node-scripts/crontab-tmp;
 echo "#" >> /etc/node-scripts/crontab-tmp;
 echo "###### End crontabs for bitcoin node ######" >> /etc/node-scripts/crontab-tmp;
 echo "#" >> /etc/node-scripts/crontab-tmp;
