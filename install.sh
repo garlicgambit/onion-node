@@ -86,8 +86,8 @@ echo "Otherwise, sit back and relax";
 echo "";
 sleep 120;
 
-# Install packages - assume yes '-y'
-"$INSTALLSCRIPTS"/apt-install.sh;
+# Install latest updates and Tor - assume yes '-y'
+"$INSTALLSCRIPTS"/apt-install-tor.sh;
 
 # Allow Tor proces to connect to the web
 "$INSTALLSCRIPTS"/iptables-config.sh;
@@ -107,6 +107,9 @@ sleep 30;
 # Wait for tor circuit
 echo "Wait for Tor circuit...sleeping 120 seconds";
 sleep 120;
+
+# Install other packages - assume yes '-y'
+"$INSTALLSCRIPTS"/apt-install-packages.sh;
 
 # Download GPG keys
 "$INSTALLSCRIPTS"/download-gpg-keys.sh;
