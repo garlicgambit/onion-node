@@ -106,8 +106,8 @@ sleep 30;
 "$SCRIPTDIR"/tor-date-check.sh;
 
 # Wait for tor circuit
-echo "Wait for Tor circuit...sleeping 120 seconds";
-sleep 120;
+echo "Wait for Tor circuit...sleeping 5 minutes";
+sleep 300;
 
 # Install other packages - assume yes '-y'
 "$INSTALLSCRIPTS"/apt-install-packages.sh;
