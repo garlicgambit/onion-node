@@ -32,7 +32,8 @@ mkdir -p "$BITCOINDIR";
 # Copy files to correct locations
 cp "$CONFIGFILES"/sysctl-kernel-hardening.conf /etc/sysctl.d/;
 cp "$CONFIGFILES"/sources.list /etc/apt/;
-cp "$CONFIGFILES"/collabora.list raspi.list /etc/apt/sources.list.d/;
+cp "$CONFIGFILES"/collabora.list /etc/apt/sources.list.d/;
+cp "$CONFIGFILES"/raspi.list /etc/apt/sources.list.d/;
 cp "$CONFIGFILES"/interfaces /etc/network/;
 cp "$CONFIGFILES"/dhclient.conf /etc/dhcp/;
 cp "$CONFIGFILES"/gitconfig /root/.gitconfig;
@@ -95,14 +96,14 @@ iptables-save > /etc/node-scripts/iptables.rules;
 
 # Put torrc at correct location
 cp /etc/tor/torrc /etc/tor/torrc-backup;
-cp torrc /etc/tor/torrc;
+cp "$CONFIGFILES"/torrc /etc/tor/torrc;
 chmod 644 /etc/tor/torrc;
 chown debian-tor:debian-tor /etc/tor/torrc;
 /etc/init.d/tor restart;
 sleep 30;
 
 # Run tor-date-check
-"$INSTALLSCRIPTS"/tor-date-check.sh;
+"$SCRIPTDIR"/tor-date-check.sh;
 
 # Wait for tor circuit
 echo "Wait for Tor circuit...sleeping 120 seconds";
@@ -121,12 +122,13 @@ sleep 120;
 "$INSTALLSCRIPTS"/install-crontabs.sh;
 
 # Copy dhcp-script-bitcoin-node to correct location
-cp "$CONFIGFILES"/dhcp-script-bitcoin-node /etc/dhcp/dhclient-exit-hooks.d/dhcp-script-bitcoin-node;
+cp "$CONFIGFILES"/dhcp-script-bitcoin-node /etc/dhcp/dhclient-exit-hooks.d/;
 chmod 744 /etc/dhcp/dhclient-exit-hooks.d/dhcp-script-bitcoin-node;
 chown root:root /etc/dhcp/dhclient-exit-hooks.d/dhcp-script-bitcoin-node;
 
 # Copy unattended-upgrade files to correct location
-cp "$CONFIGFILES"/20auto-upgrades "$CONFIGFILES"/50unattended-upgrades /etc/apt/apt.conf.d/;
+cp "$CONFIGFILES"/20auto-upgrades /etc/apt/apt.conf.d/;
+cp "$CONFIGFILES"/50unattended-upgrades /etc/apt/apt.conf.d/;
 chmod 644 /etc/apt/apt.conf.d/20auto-upgrades /etc/apt/apt.conf.d/50unattended-upgrades;
 chown root:root /etc/apt/apt.conf.d/20auto-upgrades /etc/apt/apt.conf.d/50unattended-upgrades;
 
