@@ -3,7 +3,7 @@
 # This script will configure a full Bitcoin onion node on a stock Raspbian install
 
 # To do:
-# - Install Tor first, then fetch all other apt packages via Tor
+# - Nothing yet 
 
 # Variables
 BITCOINUSER=pi;
