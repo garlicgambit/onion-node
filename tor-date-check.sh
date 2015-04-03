@@ -10,7 +10,7 @@ set -eu
 
 # Variables
 PATH=$PATH:/etc/node-scripts/;
-LOCKDIR=/tmp/tor-date-check.lock/;
+LOCKDIR=/tmp/tor-bitcoin.lock/;
 
 
 # Only run as root
