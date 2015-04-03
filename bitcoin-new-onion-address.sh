@@ -6,7 +6,7 @@ set -eu
 
 # To Do
 # - Integrate while loop to check if /tmp/hidden_service/hostname exists with 'sed'ting the new hostname in the bitcoin.conf file
-# - A stale lockfile/LOCKDIR could disrupt the entire script, might need to add additional safeguards
+# - A presumably 'stale' lockfile/LOCKDIR is removed after 30 minutes. Look into a more elegant solution.
 
 export RANDFILE=/etc/node-scripts/.rnd;
 
@@ -32,16 +32,23 @@ if [[ "$(id -u)" != "0" ]]; then
   exit 0;
 fi
 
-# Set lockfile/dir - mkdir is atomic
-# For portability flock or other Linux only tools are not used
+# Check if a lockfile/LOCKDIR exists, wait max 30 minutes to remove 'stale' lockfile and exit script
 TRIES=0
-while [[ -d "$LOCKDIR" ]] && [[ "$TRIES" -lt 10 ]]; do
+while [[ -d "$LOCKDIR" ]] && [[ "$TRIES" -lt 30 ]]; do
   echo "Temporarily not able to acquire lock on "$LOCKDIR"";
-  echo "Retry in 30 seconds";
-  sleep 30;
+  echo "Other processes might be running...retry in 60 seconds";
+  sleep 60;
   TRIES=$(( $TRIES +1 ));
+  if [[ $TRIES -eq 30 ]]; then
+    echo "ERROR: After 30 minutes the "$LOCKDIR" still exists";
+    echo "Not a good sign";
+    echo "Removing presumably stale "$LOCKDIR"";
+    rmdir "$LOCKDIR";
+  fi
 done;
 
+# Set lockfile/dir - mkdir is atomic
+# For portability flock or other Linux only tools are not used
 if mkdir "$LOCKDIR"; then
   trap 'rmdir "$LOCKDIR"; exit' INT TERM EXIT; # remove LOCKDIR when script is interrupted, terminated or finished
   echo "Successfully acquired lock on "$LOCKDIR"";
