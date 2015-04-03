@@ -6,6 +6,7 @@ set -eu
 
 # To Do
 # - Integrate while loop to check if /tmp/hidden_service/hostname exists with 'sed'ting the new hostname in the bitcoin.conf file
+# - A stale lockfile/LOCKDIR could disrupt the entire script, might need to add additional safeguards
 
 export RANDFILE=/etc/node-scripts/.rnd;
 
@@ -22,7 +23,7 @@ OLDRPCPASSWORD=CHANGETHISPASSWORD;
 # externalip variables
 EXTERNALIP=externalip=;
 
-LOCKDIR=/tmp/bitcoin-new-onion-address.lock/;
+LOCKDIR=/tmp/tor-bitcoin.lock/;
 
 
 # Only run as root
@@ -33,6 +34,14 @@ fi
 
 # Set lockfile/dir - mkdir is atomic
 # For portability flock or other Linux only tools are not used
+TRIES=0
+while [[ -d "$LOCKDIR" ]] && [[ "$TRIES" -lt 10 ]]; do
+  echo "Temporarily not able to acquire lock on "$LOCKDIR"";
+  echo "Retry in 30 seconds";
+  sleep 30;
+  TRIES=$(( $TRIES +1 ));
+done;
+
 if mkdir "$LOCKDIR"; then
   trap 'rmdir "$LOCKDIR"; exit' INT TERM EXIT; # remove LOCKDIR when script is interrupted, terminated or finished
   echo "Successfully acquired lock on "$LOCKDIR"";
