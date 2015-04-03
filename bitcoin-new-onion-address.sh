@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -eu
+
 # This script is used to set (fresh) values in bitcoin.conf file
 
 # To Do
@@ -20,6 +22,24 @@ OLDRPCPASSWORD=CHANGETHISPASSWORD;
 # externalip variables
 EXTERNALIP=externalip=;
 
+LOCKDIR=/tmp/bitcoin-new-onion-address.lock/;
+
+
+# Only run as root
+if [[ "$(id -u)" != "0" ]]; then
+  echo "ERROR: Must be run as root...exiting script";
+  exit 0;
+fi
+
+# Set lockfile/dir - mkdir is atomic
+# For portability flock or other Linux only tools are not used
+if mkdir "$LOCKDIR"; then
+  trap 'rmdir "$LOCKDIR"; exit' INT TERM EXIT; # remove LOCKDIR when script is interrupted, terminated or finished
+  echo "Successfully acquired lock on "$LOCKDIR"";
+else
+  echo "Failed to acquire lock on "$LOCKDIR"";
+  exit 0;
+fi
 
 # Stop bitcoin process - execute bitcoin-control.sh script
 echo "Stopping bitcoin process";
