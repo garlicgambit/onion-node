@@ -1,13 +1,17 @@
 #!/bin/bash
 
+set -eu
+
 # This script tries to bootstrap the current time in order to get Tor up and running.
 
 # To Do:
 # - Issues might arise when the system has been offline for a while + Tor consensus file exists + Tor hasn't established a circuit
 #   system time will be in the future compared to Tor consensus
 
-# PATH
+# Variables
 PATH=$PATH:/etc/node-scripts/;
+LOCKDIR=/tmp/tor-date-check.lock/;
+
 
 # Only run as root
 if [[ "$(id -u)" != "0" ]]; then
@@ -15,6 +19,15 @@ if [[ "$(id -u)" != "0" ]]; then
   exit 0;
 fi
 
+# Set lockfile/dir - mkdir is atomic
+# For portability flock or other Linux only tools are not used
+if mkdir "$LOCKDIR"; then
+  trap 'rmdir "$LOCKDIR"; exit' INT TERM EXIT; # remove LOCKDIR when script is interrupted, terminated or finished
+  echo "Successfully acquired lock on "$LOCKDIR"";
+else
+  echo "Failed to acquire lock on "$LOCKDIR"";
+  exit 0;
+fi
 
 # Only run when tor is running
 if [[ "$(pgrep "tor" -u debian-tor >> /dev/null && echo "Running")" == "Running" ]]; then
@@ -26,7 +39,6 @@ else
   echo "Sleeping for 30 seconds to let the Tor process start smoothly";
   sleep 30;
 fi
-
 
 # Check if Tor has consensus and check if Tor has an invalid certificate date
 TRIES=0;
@@ -64,7 +76,6 @@ while [[ $(anondate --has-consensus) == "false" ]] && [[ "$TRIES" -lt 40 ]]; do
   fi
 done
 
-
 # Verify Tor time is in valid range
 if [[ "$(anondate --current-time-in-valid-range)" != "true" ]]; then
   echo "System time to far off Tor consensus";
@@ -87,5 +98,3 @@ if [[ "$(anondate --current-time-in-valid-range)" != "true" ]]; then
 else
   echo "The system time is within the Tor consensus";
 fi
-
-
