@@ -11,6 +11,7 @@ BITCOINDIR=/home/"$BITCOINUSER"/.bitcoin;
 SCRIPTDIR=/etc/node-scripts;
 CONFIGFILES="$SCRIPTDIR"/config-files;
 INSTALLSCRIPTS="$SCRIPTDIR"/install-scripts;
+APTPACKAGE=gnupg-curl;
 
 # Start installation
 echo "";
@@ -105,12 +106,30 @@ sleep 30;
 # Run tor-date-check
 "$SCRIPTDIR"/tor-date-check.sh;
 
+### Disabled in favor of new APTPACKAGE while loop below ###
 # Wait for tor circuit
-echo "Wait for Tor circuit...sleeping 5 minutes";
-sleep 300;
+#echo "Wait for Tor circuit...sleeping 5 minutes";
+#sleep 300;
 
-# Install other packages - assume yes '-y'
-"$INSTALLSCRIPTS"/apt-install-packages.sh;
+# Check if APTPACKAGE is installed, if not run apt-install-packages.sh
+# Sometimes Tor is really slow to setup a circuit and needs a request to get started
+# So the apt-get requests might fail the first time, because no Tor circuit is available
+# Hopefully apt will work in a later run...
+TRIES=0
+while [[ ! $(dpkg-query -W "$APTPACKAGE" 2>/dev/null ) ]] && [[ "$TRIES" -lt 20 ]]; do
+  echo ""$APTPACKAGE" is not installed...will run apt-install-packages.sh";
+  "$INSTALLSCRIPTS"/apt-install-packages.sh;
+  sleep 30;
+  TRIES=$(( $TRIES +1 ));
+  if [[ $TRIES -eq 20 ]]; then
+    echo "ERROR: "$APTPACKAGE" is not installed";
+    echo "The installation has failed...probably due to network/Tor issues";
+    echo "Check network/Tor connection and run the installer again and see if you get better results";
+    echo "The installation is aborted";
+    exit 0;
+  fi
+done;
+
 
 # Download GPG keys
 "$INSTALLSCRIPTS"/download-gpg-keys.sh;
