@@ -106,11 +106,6 @@ sleep 30;
 # Run tor-date-check
 "$SCRIPTDIR"/tor-date-check.sh;
 
-### Disabled in favor of new APTPACKAGE while loop below ###
-# Wait for tor circuit
-#echo "Wait for Tor circuit...sleeping 5 minutes";
-#sleep 300;
-
 # Check if APTPACKAGE is installed, if not run apt-install-packages.sh
 # Sometimes Tor is really slow to setup a circuit and needs a request to get started
 # So the apt-get requests might fail the first time, because no Tor circuit is available
@@ -129,7 +124,6 @@ while [[ ! $(dpkg-query -W "$APTPACKAGE" 2>/dev/null ) ]] && [[ "$TRIES" -lt 20 
     exit 0;
   fi
 done;
-
 
 # Download GPG keys
 "$INSTALLSCRIPTS"/download-gpg-keys.sh;
