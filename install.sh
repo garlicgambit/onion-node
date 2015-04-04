@@ -11,7 +11,7 @@ BITCOINDIR=/home/"$BITCOINUSER"/.bitcoin;
 SCRIPTDIR=/etc/node-scripts;
 CONFIGFILES="$SCRIPTDIR"/config-files;
 INSTALLSCRIPTS="$SCRIPTDIR"/install-scripts;
-APTPACKAGE=gnupg-curl;
+APTPACKAGE=macchanger; # This package should be installed with apt-install-packages.sh
 
 # Start installation
 echo "";
