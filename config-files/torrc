@@ -49,35 +49,35 @@ SocksPort 9450 IsolateDestAddr
 ## Transport for root user tcp port 80 traffic
 TransPort 9550 IsolateDestAddr
 
-
 ## Hidden service for bitcoind - The .onion hostname will change automatically on system reboot
 HiddenServiceDir /tmp/hidden_service/
 HiddenServicePort 8333 127.0.0.1:8333
 
+
 ## Hidden service for remote management - in case you want to manage your node(s) remotely
 ##
 ## Note:
-## The .onion address for bitcoind process rotates frequently to improve the anonymity of the node and it's peers.
+## The .onion address for bitcoind process rotates frequently to improve the anonymity of the node and its peers.
 ## If you want to remotely manage your node and want to keep the same level of anonymity for your node, then you have to take some 
 ## pretty extreme steps. 
 ##
 ## Most important thing to remember: assume that everything is tapped/stored/analyzed.
 ## 
 ## Here are some inspirational tips for remotely managing your node via SSH
-## Goal: Restrict access to the fingerprint of your node' SSH server public key.
+## Goal: Restrict access to public key of your node's SSH server.
 ##
 ## Step 1 Do not use port 22 as listening port for your 'HiddenServicePort' - Yes, this is security by obscurity, don't depend on it.
-## Step 2 Restrict access to the 'HiddenServicePort' - Many options for this; Tor' builtin 'HiddenServiceAuthorizeClient', firewalling, 
+## Step 2 Restrict access to the 'HiddenServicePort' - Many options for this; Tor's builtin 'HiddenServiceAuthorizeClient', firewalling,
 ##        portknocking, etc or a combination of them.
 ## Step 3 Rotate your hidden service address frequently - You might be able to automatically use a new address every day,
 ##        just like the hidden service for bitcoind, but have a pre-compiled list so you know what the hostname will be at a given moment.
 ## Step 4 Better safe then sorry, rotate your SSH server keys frequently
-## Step 5 The usual SSH server protections - Strong cryptographic algorithms, key based authentication, multi factor authentication, rate limiting, 
-##        restrict usernames, etc - But if your opponent get's this far it can profile your system based on it's SSH server key fingerprint.       
-##        Ideally this is something you want to prevent.
+## Step 5 The usual SSH server protections - Strong cryptographic algorithms, key based authentication, multi factor authentication,
+##        login rate limiting, restrict usernames, etc - But if your opponent get's this far it can profile your system based on its
+##        SSH server public key. Ideally this is something you want to prevent.
 ##
 ## Example config for remote management hidden service based on SSH
-## It is assumed that the SSH service is running locally on it's default port: 22.
+## It is assumed that the SSH service is running locally on its default port: 22.
 ## The hidden service port has been set to port 22000. You should probably pick something else. 
 ## Something somewhere in the range of 10.000-65.000.
 ## 

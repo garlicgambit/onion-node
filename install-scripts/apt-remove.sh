@@ -7,4 +7,5 @@ apt-get purge -y cifs-utils cups-bsd cups-client cups-common desktop-base dillo 
 apt-get purge -y firmware-atheros firmware-brcm80211 firmware-libertas firmware-ralink firmware-realtek;
 
 # Cleanup leftovers
+apt-get autoremove -y;
 apt-get autoclean -y;

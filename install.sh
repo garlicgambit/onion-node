@@ -3,7 +3,7 @@
 # This script will configure a full Bitcoin onion node on a stock Raspbian install
 
 # To do:
-# - Install Tor first, then fetch all other apt packages via Tor
+# - Nothing yet 
 
 # Variables
 BITCOINUSER=pi;
@@ -11,6 +11,7 @@ BITCOINDIR=/home/"$BITCOINUSER"/.bitcoin;
 SCRIPTDIR=/etc/node-scripts;
 CONFIGFILES="$SCRIPTDIR"/config-files;
 INSTALLSCRIPTS="$SCRIPTDIR"/install-scripts;
+APTPACKAGE=macchanger; # This package should be installed with apt-install-packages.sh
 
 # Start installation
 echo "";
@@ -32,7 +33,8 @@ mkdir -p "$BITCOINDIR";
 # Copy files to correct locations
 cp "$CONFIGFILES"/sysctl-kernel-hardening.conf /etc/sysctl.d/;
 cp "$CONFIGFILES"/sources.list /etc/apt/;
-cp "$CONFIGFILES"/collabora.list raspi.list /etc/apt/sources.list.d/;
+cp "$CONFIGFILES"/collabora.list /etc/apt/sources.list.d/;
+cp "$CONFIGFILES"/raspi.list /etc/apt/sources.list.d/;
 cp "$CONFIGFILES"/interfaces /etc/network/;
 cp "$CONFIGFILES"/dhclient.conf /etc/dhcp/;
 cp "$CONFIGFILES"/gitconfig /root/.gitconfig;
@@ -86,8 +88,8 @@ echo "Otherwise, sit back and relax";
 echo "";
 sleep 120;
 
-# Install packages - assume yes '-y'
-"$INSTALLSCRIPTS"/apt-install.sh;
+# Install latest updates and Tor - assume yes '-y'
+"$INSTALLSCRIPTS"/apt-install-tor.sh;
 
 # Allow Tor proces to connect to the web
 "$INSTALLSCRIPTS"/iptables-config.sh;
@@ -95,18 +97,33 @@ iptables-save > /etc/node-scripts/iptables.rules;
 
 # Put torrc at correct location
 cp /etc/tor/torrc /etc/tor/torrc-backup;
-cp torrc /etc/tor/torrc;
+cp "$CONFIGFILES"/torrc /etc/tor/torrc;
 chmod 644 /etc/tor/torrc;
 chown debian-tor:debian-tor /etc/tor/torrc;
 /etc/init.d/tor restart;
 sleep 30;
 
 # Run tor-date-check
-"$INSTALLSCRIPTS"/tor-date-check.sh;
+"$SCRIPTDIR"/tor-date-check.sh;
 
-# Wait for tor circuit
-echo "Wait for Tor circuit...sleeping 120 seconds";
-sleep 120;
+# Check if APTPACKAGE is installed, if not run apt-install-packages.sh
+# Sometimes Tor is really slow to setup a circuit and needs a request to get started
+# So the apt-get requests might fail the first time, because no Tor circuit is available
+# Hopefully apt will work in a later run...
+TRIES=0
+while [[ ! $(dpkg-query -W "$APTPACKAGE" 2>/dev/null ) ]] && [[ "$TRIES" -lt 20 ]]; do
+  echo ""$APTPACKAGE" is not installed...will run apt-install-packages.sh";
+  "$INSTALLSCRIPTS"/apt-install-packages.sh;
+  sleep 30;
+  TRIES=$(( $TRIES +1 ));
+  if [[ $TRIES -eq 20 ]]; then
+    echo "ERROR: "$APTPACKAGE" is not installed";
+    echo "The installation has failed...probably due to network/Tor issues";
+    echo "Check network/Tor connection and run the installer again and see if you get better results";
+    echo "The installation is aborted";
+    exit 0;
+  fi
+done;
 
 # Download GPG keys
 "$INSTALLSCRIPTS"/download-gpg-keys.sh;
@@ -121,12 +138,13 @@ sleep 120;
 "$INSTALLSCRIPTS"/install-crontabs.sh;
 
 # Copy dhcp-script-bitcoin-node to correct location
-cp "$CONFIGFILES"/dhcp-script-bitcoin-node /etc/dhcp/dhclient-exit-hooks.d/dhcp-script-bitcoin-node;
+cp "$CONFIGFILES"/dhcp-script-bitcoin-node /etc/dhcp/dhclient-exit-hooks.d/;
 chmod 744 /etc/dhcp/dhclient-exit-hooks.d/dhcp-script-bitcoin-node;
 chown root:root /etc/dhcp/dhclient-exit-hooks.d/dhcp-script-bitcoin-node;
 
 # Copy unattended-upgrade files to correct location
-cp "$CONFIGFILES"/20auto-upgrades "$CONFIGFILES"/50unattended-upgrades /etc/apt/apt.conf.d/;
+cp "$CONFIGFILES"/20auto-upgrades /etc/apt/apt.conf.d/;
+cp "$CONFIGFILES"/50unattended-upgrades /etc/apt/apt.conf.d/;
 chmod 644 /etc/apt/apt.conf.d/20auto-upgrades /etc/apt/apt.conf.d/50unattended-upgrades;
 chown root:root /etc/apt/apt.conf.d/20auto-upgrades /etc/apt/apt.conf.d/50unattended-upgrades;
 
