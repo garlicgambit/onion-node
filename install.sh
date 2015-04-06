@@ -25,6 +25,8 @@ echo "Alright... here we go";
 echo "";
 sleep 3;
 
+# Remove user pi from 'adm' group
+deluser "$BITCOINUSER" adm;
 
 # Create directories
 mkdir -p /root/.gnupg/;
