@@ -8,10 +8,11 @@ set -eu
 # - Integrate while loop to check if /tmp/hidden_service/hostname exists with 'sed'ting the new hostname in the bitcoin.conf file
 # - A presumably 'stale' lockfile/LOCKDIR is removed after 30 minutes. Look into a more elegant solution.
 
-export RANDFILE=/etc/node-scripts/.rnd;
+export RANDFILE="$ONIONDIR"/.rnd;
 
 # Variables
 
+ONIONDIR=/etc/onion-node;
 # Location of bitcoin.conf file
 BITCOINFILE=/home/pi/.bitcoin/bitcoin.conf;
 
@@ -59,7 +60,7 @@ fi
 
 # Stop bitcoin process - execute bitcoin-control.sh script
 echo "Stopping bitcoin process";
-/etc/node-scripts/bitcoin-control.sh;
+"$ONIONDIR"/bitcoin-control.sh;
 echo "Bitcoin process has quit";
 
 # Change .onion address
