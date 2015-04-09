@@ -8,7 +8,7 @@ set -eu
 # - Integrate while loop to check if /tmp/hidden_service/hostname exists with 'sed'ting the new hostname in the bitcoin.conf file
 # - A presumably 'stale' lockfile/LOCKDIR is removed after 30 minutes. Look into a more elegant solution.
 
-export RANDFILE="$ONIONDIR"/.rnd;
+export RANDFILE=/etc/onion-node/.rnd;
 
 # Variables
 
