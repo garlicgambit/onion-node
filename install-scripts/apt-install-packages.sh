@@ -1,7 +1,11 @@
 #!/bin/bash
 
+# Special APTPACKAGE install.sh check - this package is checked when running install.sh
+# This should be the first package to get installed.
+apt-get install -y macchanger
+
 # Install other software
-apt-get install -y gnupg-curl macchanger unattended-upgrades;
+apt-get install -y gnupg-curl unattended-upgrades;
 
 # Install bitcoin dependencies
 apt-get install -y autoconf build-essential libboost-chrono-dev libboost-dev libboost-filesystem-dev libboost-program-options-dev libboost-system-dev libboost-test-dev libboost-thread-dev libtool libssl-dev;

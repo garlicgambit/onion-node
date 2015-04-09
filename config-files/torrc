@@ -21,9 +21,9 @@
 ## - Come up with a good bandwidthlimit for most (household) situations, probably somewhere between 1-5 Mbit, needs more research
 
 
-## Set bandwidth limit on Tor traffic - 650 KBytes is roughly 5 Mbit
-BandwidthRate 650 KBytes
-BandwidthBurst 650 KBytes
+## Set bandwidth limit on Tor traffic - 380 KBytes is roughly 3 Mbit
+BandwidthRate 380 KBytes
+BandwidthBurst 380 KBytes
 
 ## Minimize logging to extend lifetime SD cards
 AvoidDiskWrites 1

@@ -7,7 +7,7 @@
 # Prefer to use /etc/network/interfaces file, to keep network configuration at one point.
 # Need to troubleshoot the problem further/get another fix
 
-export RANDFILE=/etc/node-scripts/.rnd;
+export RANDFILE=/etc/onion-node/.rnd;
 
 MACSTART=00:;
 MACEND=$(openssl rand -hex 5 | sed 's/\(..\)/\1:/g; s/.$//');

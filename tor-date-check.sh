@@ -9,7 +9,7 @@ set -eu
 #   system time will be in the future compared to Tor consensus
 
 # Variables
-PATH=$PATH:/etc/node-scripts/;
+PATH=$PATH:/etc/onion-node/;
 LOCKDIR=/tmp/tor-bitcoin.lock/;
 
 

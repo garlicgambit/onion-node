@@ -8,9 +8,9 @@
 # Variables
 BITCOINUSER=pi;
 BITCOINDIR=/home/"$BITCOINUSER"/.bitcoin;
-SCRIPTDIR=/etc/node-scripts;
-CONFIGFILES="$SCRIPTDIR"/config-files;
-INSTALLSCRIPTS="$SCRIPTDIR"/install-scripts;
+ONIONDIR=/etc/onion-node;
+CONFIGFILES="$ONIONDIR"/config-files;
+INSTALLSCRIPTS="$ONIONDIR"/install-scripts;
 APTPACKAGE=macchanger; # This package should be installed with apt-install-packages.sh
 
 # Start installation
@@ -25,6 +25,8 @@ echo "Alright... here we go";
 echo "";
 sleep 3;
 
+# Remove user pi from 'adm' group
+deluser "$BITCOINUSER" adm;
 
 # Create directories
 mkdir -p /root/.gnupg/;
@@ -71,7 +73,7 @@ chown -R "$BITCOINUSER":"$BITCOINUSER" "$BITCOINDIR";
 
 # Run iptables-config.sh to configure iptables
 "$INSTALLSCRIPTS"/iptables-config-pre-tor.sh;
-iptables-save > /etc/node-scripts/iptables.rules;
+iptables-save > "$ONIONDIR"/iptables.rules;
 
 # Remove unnecessary packages - assume yes '-y'
 "$INSTALLSCRIPTS"/apt-remove.sh;
@@ -93,7 +95,7 @@ sleep 120;
 
 # Allow Tor proces to connect to the web
 "$INSTALLSCRIPTS"/iptables-config.sh;
-iptables-save > /etc/node-scripts/iptables.rules;
+iptables-save > "$ONIONDIR"/iptables.rules;
 
 # Put torrc at correct location
 cp /etc/tor/torrc /etc/tor/torrc-backup;
@@ -104,7 +106,7 @@ chown debian-tor:debian-tor /etc/tor/torrc;
 sleep 30;
 
 # Run tor-date-check
-"$SCRIPTDIR"/tor-date-check.sh;
+"$ONIONDIR"/tor-date-check.sh;
 
 # Check if APTPACKAGE is installed, if not run apt-install-packages.sh
 # Sometimes Tor is really slow to setup a circuit and needs a request to get started
