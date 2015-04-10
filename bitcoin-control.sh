@@ -5,6 +5,9 @@
 # TODO
 # - Nothing yet...
 
+# Variables
+BITCOINUSER=bitcoinuser;
+
 # Check whether the bitcoind process is running
 if [[ "$(pgrep "bitcoind" >> /dev/null && echo "Running")" == "Running" ]]; then
   echo "Bitcoind process is running";
@@ -15,7 +18,7 @@ fi;
 
 # Check wether the bitcoind process is ready to receive stop command - check for 30 minutes
 TRIES=0;
-while [[ "$(sudo -u pi bitcoin-cli getinfo |grep "version" >> /dev/null && echo "Running")" != "Running" ]] && [[ "$TRIES" -lt 60 ]]; do
+while [[ "$(sudo -u "$BITCOINUSER" bitcoin-cli getinfo |grep "version" >> /dev/null && echo "Running")" != "Running" ]] && [[ "$TRIES" -lt 60 ]]; do
   echo "bitcoin-cli is not ready to accept commands...sleeping for 30 seconds";
   sleep 30;
   TRIES=$(( $TRIES +1 ));
@@ -23,7 +26,7 @@ done;
 
 # Stop the bitcoind process - whether the bitcoind command is ready or not
 echo "Stopping bitcoind process";
-sudo -u pi bitcoin-cli stop;
+sudo -u "$BITCOINUSER" bitcoin-cli stop;
 echo "Sent bitcoind process the stop signal";
 
 # Wait till the bitcoind process is gone - check for 30 minutes
