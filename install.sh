@@ -6,7 +6,8 @@
 # - Nothing yet 
 
 # Variables
-BITCOINUSER=pi;
+DEFAULTUSER=pi;
+BITCOINUSER=bitcoinuser;
 BITCOINDIR=/home/"$BITCOINUSER"/.bitcoin;
 ONIONDIR=/etc/onion-node;
 CONFIGFILES="$ONIONDIR"/config-files;
@@ -41,7 +42,13 @@ if [[ -r /etc/apt/apt.conf.d/50unattended-upgrades ]]; then
 fi
 
 # Remove user pi from 'adm' group
-deluser "$BITCOINUSER" adm;
+deluser "$DEFAULTUSER" adm;
+
+# Create bitcoinuser - this user runs the bitcoind process
+useradd --create-home "$BITCOINUSER";
+
+# Lockdown bitcoinuser account - disable shell access and disable login
+usermod --shell /usr/sbin/nologin --lock --expiredate 1 "$BITCOINUSER";
 
 # Create directories
 mkdir -p /root/.gnupg/;

@@ -35,9 +35,9 @@ Ok... how do I get it up and running?
 - Wait for 1 to 1.5 hours (yep, it is compiling Bitcoin from source... so be patient)
 - After the installation the system will automatically reboot. So you should be presented with a login prompt
 - Login as the user 'pi'
-- Check if the Bitcoin process is running with the command: 'bitcoin-cli getinfo'. It should output that your node has more then 1 connection.
+- Check if the Bitcoin process is running with the command: 'sudo -u bitcoinuser bitcoin-cli getinfo'. It should output that your node has more then 1 connection.
 - Let your node sync for a couple of hours/days 
-- After a couple of hours/days run 'bitcoin-cli getinfo'
+- After a couple of hours/days run 'sudo -u bitcoinuser bitcoin-cli getinfo'
 - The total number of connections should be more then 8. This means that you are contributing to the Bitcoin network.
 - That's it
 
