@@ -25,6 +25,21 @@ echo "Alright... here we go";
 echo "";
 sleep 3;
 
+# Make install.sh script re-runnable
+
+# Stop bitcoin process
+"$ONIONDIR"/bitcoin-control.sh
+
+# Remove unattended-upgrades file
+if [[ -r /etc/apt/apt.conf.d/20auto-upgrades ]]; then
+  rm /etc/apt/apt.conf.d/20auto-upgrades;
+fi
+
+# Remove unattended-upgrades file
+if [[ -r /etc/apt/apt.conf.d/50unattended-upgrades ]]; then
+  rm /etc/apt/apt.conf.d/50unattended-upgrades;
+fi
+
 # Remove user pi from 'adm' group
 deluser "$BITCOINUSER" adm;
 
