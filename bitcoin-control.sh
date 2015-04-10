@@ -9,7 +9,7 @@
 if [[ "$(pgrep "bitcoind" >> /dev/null && echo "Running")" == "Running" ]]; then
   echo "Bitcoind process is running";
 else
- echo "The bitcoind process is not running...preparing to regenerate .onion address";
+ echo "The bitcoind process is not running.";
  exit 0;
 fi;
 
