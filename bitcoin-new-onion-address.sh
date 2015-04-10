@@ -13,8 +13,9 @@ export RANDFILE=/etc/onion-node/.rnd;
 # Variables
 
 ONIONDIR=/etc/onion-node;
+BITCOINUSER=bitcoinuser;
 # Location of bitcoin.conf file
-BITCOINFILE=/home/pi/.bitcoin/bitcoin.conf;
+BITCOINFILE=/home/"$BITCOINUSER"/.bitcoin/bitcoin.conf;
 
 # rpcpassword variables
 OPENSSLKEY="$(openssl rand -base64 48)";
@@ -101,5 +102,5 @@ sed -i "s,^\("$EXTERNALIP"\).*,\1"$TORHOSTNAME"," "$BITCOINFILE";
 
 # Start bitcoin process again
 echo "Starting bitcoind process";
-sudo -u pi bitcoind -daemon >> /dev/null;
+sudo -u "$BITCOINUSER" bitcoind -daemon >> /dev/null;
 echo "bitcoind process started";
