@@ -34,14 +34,14 @@ if [[ "$(id -u)" != "0" ]]; then
   exit 0;
 fi
 
-# Check if a lockfile/LOCKDIR exists, wait max 30 minutes to remove 'stale' lockfile and exit script
+# Check if a lockfile/LOCKDIR exists, wait max 2 hours to remove 'stale' lockfile and exit script
 TRIES=0
-while [[ -d "$LOCKDIR" ]] && [[ "$TRIES" -lt 30 ]]; do
+while [[ -d "$LOCKDIR" ]] && [[ "$TRIES" -lt 120 ]]; do
   echo "Temporarily not able to acquire lock on "$LOCKDIR"";
   echo "Other processes might be running...retry in 60 seconds";
   sleep 60;
   TRIES=$(( $TRIES +1 ));
-  if [[ $TRIES -eq 30 ]]; then
+  if [[ $TRIES -eq 120 ]]; then
     echo "ERROR: After 30 minutes the "$LOCKDIR" still exists";
     echo "Not a good sign";
     echo "Removing presumably stale "$LOCKDIR"";
