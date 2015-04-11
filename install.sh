@@ -33,9 +33,9 @@ echo "Alright... here we go";
 echo "";
 sleep 3;
 
-# Check if a lockfile/LOCKDIR exists, wait max 30 minutes
+# Check if a lockfile/LOCKDIR exists, wait max 2 hours
 TRIES=0
-while [[ -d "$LOCKDIR" ]] && [[ "$TRIES" -lt 30 ]]; do
+while [[ -d "$LOCKDIR" ]] && [[ "$TRIES" -lt 120 ]]; do
   echo "Temporarily not able to acquire lock on "$LOCKDIR"";
   echo "Other processes might be running...retry in 60 seconds";
   sleep 60;
@@ -159,9 +159,9 @@ sleep 30;
 rmdir "$LOCKDIR"; # tor-date-check.sh has it's own lockfile
 "$ONIONDIR"/tor-date-check.sh;
 
-# Check if a lockfile/LOCKDIR exists, wait max 30 minutes
+# Check if a lockfile/LOCKDIR exists, wait max 2 hours
 TRIES=0
-while [[ -d "$LOCKDIR" ]] && [[ "$TRIES" -lt 30 ]]; do
+while [[ -d "$LOCKDIR" ]] && [[ "$TRIES" -lt 120 ]]; do
   echo "Temporarily not able to acquire lock on "$LOCKDIR"";
   echo "Other processes might be running...retry in 60 seconds";
   sleep 60;
@@ -206,9 +206,9 @@ done;
 rmdir "$LOCKDIR"; # install-tlsdate.sh has it's own lockfile
 "$INSTALLSCRIPTS"/install-tlsdate.sh;
 
-# Check if a lockfile/LOCKDIR exists, wait max 30 minutes
+# Check if a lockfile/LOCKDIR exists, wait max 2 hours
 TRIES=0
-while [[ -d "$LOCKDIR" ]] && [[ "$TRIES" -lt 30 ]]; do
+while [[ -d "$LOCKDIR" ]] && [[ "$TRIES" -lt 120 ]]; do
   echo "Temporarily not able to acquire lock on "$LOCKDIR"";
   echo "Other processes might be running...retry in 60 seconds";
   sleep 60;
@@ -231,9 +231,9 @@ fi
 rmdir "$LOCKDIR"; # install-bitcoin.sh has it's own lockfile
 "$INSTALLSCRIPTS"/install-bitcoin.sh;
 
-# Check if a lockfile/LOCKDIR exists, wait max 30 minutes
+# Check if a lockfile/LOCKDIR exists, wait max 2 hours
 TRIES=0
-while [[ -d "$LOCKDIR" ]] && [[ "$TRIES" -lt 30 ]]; do
+while [[ -d "$LOCKDIR" ]] && [[ "$TRIES" -lt 120 ]]; do
   echo "Temporarily not able to acquire lock on "$LOCKDIR"";
   echo "Other processes might be running...retry in 60 seconds";
   sleep 60;
