@@ -37,9 +37,9 @@ sleep "$RANDOMTIME";
 # - building packages from source
 # - Tor date check
 #
-# Check if a lockfile/LOCKDIR exists, wait max 30 minutes
+# Check if a lockfile/LOCKDIR exists, wait max 2 hours
 TRIES=0
-while [[ -d "$LOCKDIR2" ]] && [[ "$TRIES" -lt 30 ]]; do
+while [[ -d "$LOCKDIR2" ]] && [[ "$TRIES" -lt 120 ]]; do
   echo "Temporarily not able to acquire lock on "$LOCKDIR2"";
   echo "Other processes might be running...retry in 60 seconds";
   sleep 60;
