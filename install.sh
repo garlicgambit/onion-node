@@ -14,6 +14,13 @@ CONFIGFILES="$ONIONDIR"/config-files;
 INSTALLSCRIPTS="$ONIONDIR"/install-scripts;
 APTPACKAGE=macchanger; # This package should be installed with apt-install-packages.sh
 
+
+# Only run as root
+if [[ "$(id -u)" != "0" ]]; then
+  echo "ERROR: Must be run as root...exiting script";
+  exit 0;
+fi
+
 # Start installation
 echo "";
 echo "The installation of a bitcoin node takes about 1 to 1.5 hours";
