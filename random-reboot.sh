@@ -37,7 +37,7 @@ sleep "$RANDOMTIME";
 # - building packages from source
 # - Tor date check
 #
-# Check if a lockfile/LOCKDIR exists, wait max 30 minutes to remove 'stale' lockfile and exit script
+# Check if a lockfile/LOCKDIR exists, wait max 30 minutes
 TRIES=0
 while [[ -d "$LOCKDIR2" ]] && [[ "$TRIES" -lt 30 ]]; do
   echo "Temporarily not able to acquire lock on "$LOCKDIR2"";
