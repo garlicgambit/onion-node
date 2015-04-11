@@ -30,5 +30,6 @@ fi
 echo "Sleeping for "$RANDOMTIME" seconds";
 sleep "$RANDOMTIME";
 
-# Reboot system
-shutdown -r 0;
+# Reboot system in 5 minutes
+# Give user a heads up and possibility to save work and/or cancel reboot
+shutdown -r 5;
