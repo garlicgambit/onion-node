@@ -43,16 +43,26 @@ fi
 # Download latest version from github.com
 echo "Download latest version from "$BTCURL"";
 
-if [[ -d "$SRCDIR" ]]; then
-  echo "$SRCDIR already exists...downloading updates";
-  cd "$SRCDIR";
-  git pull --all;
-else
-  echo "Download full bitcoin source code";
-  git clone "$BTCURL" "$SRCDIR";
-fi
+TRIES=0;
+while [[ "$TRIES" -lt 10 ]]; do
+  if [[ -d "$SRCDIR" ]]; then
+    echo ""$SRCDIR" already exits...downloading Bitcoin updates.";
+    cd "$SRCDIR";
+    git fetch --all --tags && break;
+  else
+    echo "Downloading full Bitcoin source code.";
+    git clone "$BTCURL" "$SRCDIR" && break;
+  fi
+  sleep 30;
+  TRIES=$(( $TRIES +1 ));
+  if [[ "$TRIES" -eq 10 ]]; then
+    echo "ERROR: The Bitcoin download script has failed.";
+    echo "The script will exit now.";
+    exit 0;
+  fi
+done;
 
-echo "Downloaded latest version";
+echo "Downloaded latest Bitcoin version";
 
 # Verify bitcoin source code
 cd "$SRCDIR";
