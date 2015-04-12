@@ -15,7 +15,7 @@ fi
 
 # Create temporary crontab file
 echo "Create temporary crontab file";
-cp "$ONOINDIR"/crontab-orig "$ONIONDIR"/crontab-tmp;
+cp "$ONIONDIR"/crontab-orig "$ONIONDIR"/crontab-tmp;
 echo "Temporary crontab file created";
 
 # Set /bin/bash as SHELL
