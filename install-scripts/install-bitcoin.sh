@@ -45,7 +45,7 @@ else
 fi
 
 # Download latest GPG keys
-"$ONIONDIR"/
+"$GPGKEYS";
 
 # Download latest version from github.com
 echo "Download latest version from "$BTCURL"";
