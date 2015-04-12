@@ -34,6 +34,8 @@ echo "# Check every 24 hours at random interval if system time is accurate" >> "
 echo '0  0    * * *   root   /bin/sleep $(($RANDOM \% 1435))m; /etc/onion-node/tlsdate-script.sh' >> "$ONIONDIR"/crontab-tmp;
 echo "# Check every 30 minutes if Tor and bitcoind are running" >> "$ONIONDIR"/crontab-tmp;
 echo '*/30  *    * * *   root   /etc/onion-node/check-tor-bitcoin-running.sh' >> "$ONIONDIR"/crontab-tmp;
+echo "# DISABLED - Check for Bitcoin updates every 1-10 days" >> "$ONIONDIR"/crontab-tmp;
+echo '#0  0    * * *   root   /etc/onion-node/update-bitcoin.sh' >> "$ONIONDIR"/crontab-tmp;
 echo "#" >> "$ONIONDIR"/crontab-tmp;
 echo "###### End crontabs for bitcoin node ######" >> "$ONIONDIR"/crontab-tmp;
 echo "#" >> "$ONIONDIR"/crontab-tmp;
