@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -eu;
+
 # Install Onion-node crontabs in /etc/crontab
 
 # Variables
