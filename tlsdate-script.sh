@@ -71,14 +71,22 @@ arr[25]="www.xkcd.com"
 # www.ghostery.com - wrong time
 # + more...
 
-RANDOMNUMBER=$[ $RANDOM % 26 ];
-
-RANDOMDOMAIN=${arr["$RANDOMNUMBER"]};
-
-# Debug tlsdate command
-#/usr/local/bin/tlsdate -n -v -V -x socks5://127.0.0.1:9250 -H "$RANDOMDOMAIN";
-
-# Actual tlsdate command
-/usr/local/bin/tlsdate -x socks5://127.0.0.1:9250 -H "$RANDOMDOMAIN";
+# tlsdate lookup - retry another host if lookup fails
+TRIES=0;
+while [[ "$TRIES" -lt 10 ]]; do
+  RANDOMNUMBER=$[ $RANDOM % 26 ];
+  RANDOMDOMAIN=${arr["$RANDOMNUMBER"]};
+  echo "tlsdate lookup: "$RANDOMDOMAIN"";
+  /usr/local/bin/tlsdate -x socks5://127.0.0.1:9250 -H "$RANDOMDOMAIN" && break;
+  # Debug tlsdate command
+  #/usr/local/bin/tlsdate -n -v -V -x socks5://127.0.0.1:9250 -H "$RANDOMDOMAIN";
+  sleep 30;
+  TRIES=$(( $TRIES +1 ));
+  if [[ "$TRIES" -eq 10 ]]; then
+    echo "ERROR: The tlsdate lookup has failed.";
+    echo "The script will exit now.";
+    exit 0;
+  fi
+done;
 
 echo "Script is done";
