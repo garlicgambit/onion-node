@@ -5,7 +5,9 @@
 # To Do
 # - check tlsdate gpg key
 # - check sks-keyservers.net key
-
+# - automatically refresh gpg keys: parcimonie
+# - randomize time between gpg key lookups: parcimonie
+# - use different Tor circuits for gpg key lookups: parcimonie
 
 # Download gpg key Onion-node developer - Jules Mercier
 TRIES=0;
