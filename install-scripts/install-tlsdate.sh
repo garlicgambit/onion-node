@@ -35,18 +35,28 @@ else
 fi
 
 # Download latest version from github.com
-echo "Download latest version from "$TLSDATEURL"";
+echo "Download latest tlsdate version from "$TLSDATEURL"";
 
-if [[ -d "$SRCDIR" ]]; then
-  echo "$SRCDIR already exists...downloading updates";
-  cd "$SRCDIR";
-  git pull --all;
-else
-  echo "Download full tlsdate source code";
-  git clone "$TLSDATEURL" "$SRCDIR";
-fi
+TRIES=0;
+while [[ "$TRIES" -lt 10 ]]; do
+  if [[ -d "$SRCDIR" ]]; then
+    echo ""$SRCDIR" already exits...downloading tlsdate updates.";
+    cd "$SRCDIR";
+    git fetch --all --tags && break;
+  else
+    echo "Downloading full tlsdate source code.";
+    git clone "$TLSDATEURL" "$SRCDIR" && break;
+  fi
+  sleep 30;
+  TRIES=$(( $TRIES +1 ));
+  if [[ "$TRIES" -eq 10 ]]; then
+    echo "ERROR: The tlsdate download script has failed.";
+    echo "The script will exit now.";
+    exit 0;
+  fi
+done;
 
-echo "Downloaded latest version";
+echo "Downloaded latest tlsdate version";
 
 # Install tlsdate
 echo "Installing tlsdate";
