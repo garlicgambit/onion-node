@@ -5,7 +5,7 @@ set -eu
 # Check if Tor and bitcoind process are running, if not start them.
 
 # Variables
-BITCOINUSER=pi;
+BITCOINUSER=bitcoinuser;
 LOCKDIR=/tmp/tor-bitcoin.lock/;
 
 
@@ -38,7 +38,7 @@ if [[ "$(pgrep "bitcoind" >> /dev/null && echo "Running")" != "Running" ]]; then
     trap 'rmdir "$LOCKDIR"; exit' INT TERM EXIT;
     echo "Successfully acquired lock on "$LOCKDIR"";
     echo "bitcoind is not running...starting bitcoind";
-    sudo -u pi bitcoind -daemon >> /dev/null;
+    sudo -u "$BITCOINUSER" bitcoind -daemon >> /dev/null;
     rmdir "$LOCKDIR";
   else
     echo "Failed to acquire lock on "$LOCKDIR"";

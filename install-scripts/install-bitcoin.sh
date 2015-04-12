@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -eu
+
 # Install bitcoin from source
 
 # To do:
@@ -7,28 +9,71 @@
 
 # Variables
 BITCOINVERSION=v0.10.0;
+ONIONDIR=/etc/onion-node;
+GPGKEYS="$ONIONDIR"/install-scripts/download-gpg-keys.sh;
 SRCDIR=/usr/local/src/bitcoin;
 BTCURL=https://www.github.com/bitcoin/bitcoin.git;
 SWAPCONF=/etc/dphys-swapfile;
+LOCKDIR=/tmp/tor-bitcoin.lock/;
 
+
+# Only run as root
+if [[ "$(id -u)" != "0" ]]; then
+  echo "ERROR: Must be run as root...exiting script";
+  exit 0;
+fi
+
+# Check if a lockfile/LOCKDIR exists, wait max 30 minutes
+TRIES=0
+while [[ -d "$LOCKDIR" ]] && [[ "$TRIES" -lt 30 ]]; do
+  echo "Temporarily not able to acquire lock on "$LOCKDIR"";
+  echo "Other processes might be running...retry in 60 seconds";
+  sleep 60;
+  TRIES=$(( $TRIES +1 ));
+done;
+
+# Set lockfile/dir - mkdir is atomic
+# For portability flock or other Linux only tools are not used
+if mkdir "$LOCKDIR"; then
+  trap 'rmdir "$LOCKDIR"; exit' INT TERM EXIT; # remove LOCKDIR when script is interrupted, terminated or finished
+  echo "Successfully acquired lock on "$LOCKDIR"";
+else
+  echo "Failed to acquire lock on "$LOCKDIR"";
+  echo "The installation script failed...run the install.sh script again to see if you get better results."
+  echo "Tip: Reboot the system if the installation keeps failling."
+  exit 0;
+fi
+
+# Download latest GPG keys
+"$GPGKEYS";
 
 # Download latest version from github.com
 echo "Download latest version from "$BTCURL"";
 
-if [[ -d "$SRCDIR" ]]; then
-  echo "$SRCDIR already exists...downloading updates";
-  cd "$SRCDIR";
-  git pull --all;
-else
-  echo "Download full bitcoin source code";
-  git clone "$BTCURL" "$SRCDIR";
-fi
+TRIES=0;
+while [[ "$TRIES" -lt 10 ]]; do
+  if [[ -d "$SRCDIR" ]]; then
+    echo ""$SRCDIR" already exits...downloading Bitcoin updates.";
+    cd "$SRCDIR";
+    git fetch --all --tags && break;
+  else
+    echo "Downloading full Bitcoin source code.";
+    git clone "$BTCURL" "$SRCDIR" && break;
+  fi
+  sleep 30;
+  TRIES=$(( $TRIES +1 ));
+  if [[ "$TRIES" -eq 10 ]]; then
+    echo "ERROR: The Bitcoin download script has failed.";
+    echo "The script will exit now.";
+    exit 0;
+  fi
+done;
 
-echo "Downloaded latest version";
+echo "Downloaded latest Bitcoin version";
 
 # Verify bitcoin source code
 cd "$SRCDIR";
-if git tag -v "$BITCOINVERSION" 2>&1 >> /dev/null | grep -q "gpg: Good signature from" && ! git tag -v "$BITCOINVERSION" 2>&1 >> /dev/null | grep -q "gpg: Bad signature from"; then
+if git tag -v "$BITCOINVERSION" 2>&1 >> /dev/null | grep -q "^gpg: Good signature from" && ! git tag -v "$BITCOINVERSION" 2>&1 >> /dev/null | grep -q "^gpg: Bad signature from"; then
   echo "Good GPG signature...will continue bitcoin installation";
 else
   echo "ERROR: Bad or missing GPG signature...exiting bitcoin installation";
@@ -68,3 +113,4 @@ dphys-swapfile swapon;
 echo "Swap set to default size";
 
 echo "Bitcoin install script is done";
+rmdir "$LOCKDIR";

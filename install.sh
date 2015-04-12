@@ -6,12 +6,20 @@
 # - Nothing yet 
 
 # Variables
-BITCOINUSER=pi;
+DEFAULTUSER=pi;
+BITCOINUSER=bitcoinuser;
 BITCOINDIR=/home/"$BITCOINUSER"/.bitcoin;
 ONIONDIR=/etc/onion-node;
 CONFIGFILES="$ONIONDIR"/config-files;
 INSTALLSCRIPTS="$ONIONDIR"/install-scripts;
 APTPACKAGE=macchanger; # This package should be installed with apt-install-packages.sh
+LOCKDIR=/tmp/tor-bitcoin.lock/;
+
+# Only run as root
+if [[ "$(id -u)" != "0" ]]; then
+  echo "ERROR: Must be run as root...exiting script";
+  exit 0;
+fi
 
 # Start installation
 echo "";
@@ -25,8 +33,50 @@ echo "Alright... here we go";
 echo "";
 sleep 3;
 
+# Check if a lockfile/LOCKDIR exists, wait max 2 hours
+TRIES=0
+while [[ -d "$LOCKDIR" ]] && [[ "$TRIES" -lt 120 ]]; do
+  echo "Temporarily not able to acquire lock on "$LOCKDIR"";
+  echo "Other processes might be running...retry in 60 seconds";
+  sleep 60;
+  TRIES=$(( $TRIES +1 ));
+done;
+
+# Set lockfile/dir - mkdir is atomic
+# For portability flock or other Linux only tools are not used
+if mkdir "$LOCKDIR"; then
+  trap 'rmdir "$LOCKDIR"; exit' INT TERM EXIT; # remove LOCKDIR when script is interrupted, terminated or finished
+  echo "Successfully acquired lock on "$LOCKDIR"";
+else
+  echo "Failed to acquire lock on "$LOCKDIR"";
+  echo "The installation script failed...run the install.sh script again to see if you get better results."
+  echo "Tip: Reboot the system if the installation keeps failling."
+  exit 0;
+fi
+
+# Make install.sh script re-runnable
+
+# Stop bitcoin process
+"$ONIONDIR"/bitcoin-control.sh
+
+# Remove unattended-upgrades file
+if [[ -r /etc/apt/apt.conf.d/20auto-upgrades ]]; then
+  rm /etc/apt/apt.conf.d/20auto-upgrades;
+fi
+
+# Remove unattended-upgrades file
+if [[ -r /etc/apt/apt.conf.d/50unattended-upgrades ]]; then
+  rm /etc/apt/apt.conf.d/50unattended-upgrades;
+fi
+
 # Remove user pi from 'adm' group
-deluser "$BITCOINUSER" adm;
+deluser "$DEFAULTUSER" adm;
+
+# Create bitcoinuser - this user runs the bitcoind process
+useradd --create-home "$BITCOINUSER";
+
+# Lockdown bitcoinuser account - disable shell access and disable login
+usermod --shell /usr/sbin/nologin --lock --expiredate 1 "$BITCOINUSER";
 
 # Create directories
 mkdir -p /root/.gnupg/;
@@ -106,7 +156,29 @@ chown debian-tor:debian-tor /etc/tor/torrc;
 sleep 30;
 
 # Run tor-date-check
+rmdir "$LOCKDIR"; # tor-date-check.sh has it's own lockfile
 "$ONIONDIR"/tor-date-check.sh;
+
+# Check if a lockfile/LOCKDIR exists, wait max 2 hours
+TRIES=0
+while [[ -d "$LOCKDIR" ]] && [[ "$TRIES" -lt 120 ]]; do
+  echo "Temporarily not able to acquire lock on "$LOCKDIR"";
+  echo "Other processes might be running...retry in 60 seconds";
+  sleep 60;
+  TRIES=$(( $TRIES +1 ));
+done;
+
+# Set lockfile/dir - mkdir is atomic
+# For portability flock or other Linux only tools are not used
+if mkdir "$LOCKDIR"; then
+  trap 'rmdir "$LOCKDIR"; exit' INT TERM EXIT; # remove LOCKDIR when script is interrupted, terminated or finished
+  echo "Successfully acquired lock on "$LOCKDIR"";
+else
+  echo "Failed to acquire lock on "$LOCKDIR"";
+  echo "The installation script failed...run the install.sh script again to see if you get better results."
+  echo "Tip: Reboot the system if the installation keeps failling."
+  exit 0;
+fi
 
 # Check if APTPACKAGE is installed, if not run apt-install-packages.sh
 # Sometimes Tor is really slow to setup a circuit and needs a request to get started
@@ -131,10 +203,54 @@ done;
 "$INSTALLSCRIPTS"/download-gpg-keys.sh;
 
 # Install tlsdate from source
+rmdir "$LOCKDIR"; # install-tlsdate.sh has it's own lockfile
 "$INSTALLSCRIPTS"/install-tlsdate.sh;
 
+# Check if a lockfile/LOCKDIR exists, wait max 2 hours
+TRIES=0
+while [[ -d "$LOCKDIR" ]] && [[ "$TRIES" -lt 120 ]]; do
+  echo "Temporarily not able to acquire lock on "$LOCKDIR"";
+  echo "Other processes might be running...retry in 60 seconds";
+  sleep 60;
+  TRIES=$(( $TRIES +1 ));
+done;
+
+# Set lockfile/dir - mkdir is atomic
+# For portability flock or other Linux only tools are not used
+if mkdir "$LOCKDIR"; then
+  trap 'rmdir "$LOCKDIR"; exit' INT TERM EXIT; # remove LOCKDIR when script is interrupted, terminated or finished
+  echo "Successfully acquired lock on "$LOCKDIR"";
+else
+  echo "Failed to acquire lock on "$LOCKDIR"";
+  echo "The installation script failed...run the install.sh script again to see if you get better results."
+  echo "Tip: Reboot the system if the installation keeps failling."
+  exit 0;
+fi
+
 # Install bitcoin from source
+rmdir "$LOCKDIR"; # install-bitcoin.sh has it's own lockfile
 "$INSTALLSCRIPTS"/install-bitcoin.sh;
+
+# Check if a lockfile/LOCKDIR exists, wait max 2 hours
+TRIES=0
+while [[ -d "$LOCKDIR" ]] && [[ "$TRIES" -lt 120 ]]; do
+  echo "Temporarily not able to acquire lock on "$LOCKDIR"";
+  echo "Other processes might be running...retry in 60 seconds";
+  sleep 60;
+  TRIES=$(( $TRIES +1 ));
+done;
+
+# Set lockfile/dir - mkdir is atomic
+# For portability flock or other Linux only tools are not used
+if mkdir "$LOCKDIR"; then
+  trap 'rmdir "$LOCKDIR"; exit' INT TERM EXIT; # remove LOCKDIR when script is interrupted, terminated or finished
+  echo "Successfully acquired lock on "$LOCKDIR"";
+else
+  echo "Failed to acquire lock on "$LOCKDIR"";
+  echo "The installation script failed...run the install.sh script again to see if you get better results."
+  echo "Tip: Reboot the system if the installation keeps failling."
+  exit 0;
+fi
 
 # Install bitcoin node crontabs
 "$INSTALLSCRIPTS"/install-crontabs.sh;

@@ -6,15 +6,16 @@ set -eu
 
 # To Do
 # - Integrate while loop to check if /tmp/hidden_service/hostname exists with 'sed'ting the new hostname in the bitcoin.conf file
-# - A presumably 'stale' lockfile/LOCKDIR is removed after 30 minutes. Look into a more elegant solution.
+# - A presumably 'stale' lockfile/LOCKDIR is removed after 2 hours. Look into a more elegant solution.
 
 export RANDFILE=/etc/onion-node/.rnd;
 
 # Variables
 
 ONIONDIR=/etc/onion-node;
+BITCOINUSER=bitcoinuser;
 # Location of bitcoin.conf file
-BITCOINFILE=/home/pi/.bitcoin/bitcoin.conf;
+BITCOINFILE=/home/"$BITCOINUSER"/.bitcoin/bitcoin.conf;
 
 # rpcpassword variables
 OPENSSLKEY="$(openssl rand -base64 48)";
@@ -33,15 +34,15 @@ if [[ "$(id -u)" != "0" ]]; then
   exit 0;
 fi
 
-# Check if a lockfile/LOCKDIR exists, wait max 30 minutes to remove 'stale' lockfile and exit script
+# Check if a lockfile/LOCKDIR exists, wait max 2 hours to remove 'stale' lockfile and exit script
 TRIES=0
-while [[ -d "$LOCKDIR" ]] && [[ "$TRIES" -lt 30 ]]; do
+while [[ -d "$LOCKDIR" ]] && [[ "$TRIES" -lt 120 ]]; do
   echo "Temporarily not able to acquire lock on "$LOCKDIR"";
   echo "Other processes might be running...retry in 60 seconds";
   sleep 60;
   TRIES=$(( $TRIES +1 ));
-  if [[ $TRIES -eq 30 ]]; then
-    echo "ERROR: After 30 minutes the "$LOCKDIR" still exists";
+  if [[ $TRIES -eq 120 ]]; then
+    echo "ERROR: After 2 hours the "$LOCKDIR" still exists";
     echo "Not a good sign";
     echo "Removing presumably stale "$LOCKDIR"";
     rmdir "$LOCKDIR";
@@ -101,5 +102,5 @@ sed -i "s,^\("$EXTERNALIP"\).*,\1"$TORHOSTNAME"," "$BITCOINFILE";
 
 # Start bitcoin process again
 echo "Starting bitcoind process";
-sudo -u pi bitcoind -daemon >> /dev/null;
+sudo -u "$BITCOINUSER" bitcoind -daemon >> /dev/null;
 echo "bitcoind process started";
