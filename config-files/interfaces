@@ -1,16 +1,16 @@
 # Network configuration file
 
 # To Do
-# - Get eth0 mac address changes to work consistantly
+# - Get eth0 mac address changes to work consistantly with macchanger package
 
 auto lo
 	iface lo inet loopback
 
 auto eth0
 	iface eth0 inet dhcp
+	pre-up /etc/onion-node/random-mac.sh # home made alternative for macchanger
 #	pre-up ifconfig eth0 down # needed for macchanger to work
 #	pre-up macchanger -a eth0 # has issue setting new mac about 1/10 of the time, needs more research
-#	pre-up /etc/onion-node/random-mac.sh # home made alternative for macchanger, has same issue as macchanger
 
 pre-up iptables-restore < /etc/onion-node/iptables.rules
 
