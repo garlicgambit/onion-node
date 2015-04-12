@@ -63,14 +63,28 @@ else
 fi
 
 # Fetch latest Bitcoin updates
-cd "$BITCOINSRC";
-git fetch;
-git fetch --tags;
+TRIES=0;
+while [[ "$TRIES" -lt 10 ]]; do
+  cd "$BITCOINSRC";
+  git fetch --all --tags && break;
+  sleep 30;
+  TRIES=$(( $TRIES +1 ));
+  if [[ "$TRIES" -eq 10 ]]; then
+    echo "ERROR: The Bitcoin update has failed.";
+  fi
+done;
 
-# Fetch latest Onion updates
-cd "$ONIONDIR";
-git fetch;
-git fetch --tags;
+# Fetch latest Onion node updates
+TRIES=0;
+while [[ "$TRIES" -lt 10 ]]; do
+  cd "$ONIONDIR";
+  git fetch --all --tags && break;
+  sleep 30;
+  TRIES=$(( $TRIES +1 ));
+  if [[ "$TRIES" -eq 10 ]]; then
+    echo "ERROR: The Onion node update has failed.";
+  fi
+done;
 
 # Select latest Onion node release/tag
 LATESTTAG=$(git describe --tags $(git revc-list --tags --max-count=1));
