@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -eu
+
 # Install bitcoin from source
 
 # To do:
