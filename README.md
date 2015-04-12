@@ -52,4 +52,4 @@ GPG key:
 0xF7698FEE3295ABB5
 
 Bitcoin donation address:
-1EqEbXi9N9fmT8nFNWsodvUc85piaTmxps
+12HKu3nzgH16DB1jbUXRBoQqNGTYvUEEfr
