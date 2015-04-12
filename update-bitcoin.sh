@@ -11,7 +11,7 @@ BITCOININSTALL="$ONIONDIR"/install-scripts/install-bitcoin.sh;
 BITCOINSRC=/usr/local/src/bitcoin;
 LOCKDIR=/tmp/update-bitcoin.lock/;
 LOCKDIR2=/tmp/tor-bitcoin.lock/;
-# 86400 seconds is 1 days, 864000 seconds is 10 days
+# 86400 seconds is 1 day, 864000 seconds is 10 days
 MINTIME=86400;
 MAXTIME=864000;
 RANDOMTIME="$(shuf -i "$MINTIME"-"$MAXTIME" -n 1)";
