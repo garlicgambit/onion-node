@@ -14,3 +14,6 @@ MACEND=$(openssl rand -hex 5 | sed 's/\(..\)/\1:/g; s/.$//');
 MACNEW="$MACSTART""$MACEND";
 
 ifconfig eth0 down hw ether "$MACNEW";
+# Sleep 10 to fix ifdown/ifup "RTNETLINK answers: Network is unreachable"
+# In tests 1 second was enough, but use a margin of safety
+sleep 10;
