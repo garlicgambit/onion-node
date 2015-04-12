@@ -56,7 +56,7 @@ echo "Downloaded latest version";
 
 # Verify bitcoin source code
 cd "$SRCDIR";
-if git tag -v "$BITCOINVERSION" 2>&1 >> /dev/null | grep -q "gpg: Good signature from" && ! git tag -v "$BITCOINVERSION" 2>&1 >> /dev/null | grep -q "gpg: Bad signature from"; then
+if git tag -v "$BITCOINVERSION" 2>&1 >> /dev/null | grep -q "^gpg: Good signature from" && ! git tag -v "$BITCOINVERSION" 2>&1 >> /dev/null | grep -q "^gpg: Bad signature from"; then
   echo "Good GPG signature...will continue bitcoin installation";
 else
   echo "ERROR: Bad or missing GPG signature...exiting bitcoin installation";
