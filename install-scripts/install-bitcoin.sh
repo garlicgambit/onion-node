@@ -7,6 +7,8 @@
 
 # Variables
 BITCOINVERSION=v0.10.0;
+ONIONDIR=/etc/onion-node;
+GPGKEYS="$ONIONDIR"/install-scripts/download-gpg-keys.sh;
 SRCDIR=/usr/local/src/bitcoin;
 BTCURL=https://www.github.com/bitcoin/bitcoin.git;
 SWAPCONF=/etc/dphys-swapfile;
@@ -39,6 +41,9 @@ else
   echo "Tip: Reboot the system if the installation keeps failling."
   exit 0;
 fi
+
+# Download latest GPG keys
+"$ONIONDIR"/
 
 # Download latest version from github.com
 echo "Download latest version from "$BTCURL"";
