@@ -49,7 +49,7 @@ done;
 # Set lockfile/dir - mkdir is atomic
 # For portability flock or other Linux only tools are not used
 if mkdir "$LOCKDIR2"; then
-  trap 'rmdir "$LOCKDIR2"; exit' INT TERM EXIT; # remove LOCKDIR when script is interrupted, terminated or finished
+  trap 'rmdir "$LOCKDIR"; rmdir "$LOCKDIR2"; exit' INT TERM EXIT; # remove LOCKDIR when script is interrupted, terminated or finished
   echo "Successfully acquired lock on "$LOCKDIR2"";
 else
   echo "Failed to acquire lock on "$LOCKDIR2"";
