@@ -58,4 +58,4 @@ fi
 
 # Reboot system in 5 minutes
 # Give user a heads up and possibility to save work and/or cancel reboot
-shutdown -r 5 "Cancel shutdown with: sudo shutdown -c;
+shutdown -r 5 "Cancel shutdown with: sudo shutdown -c";
