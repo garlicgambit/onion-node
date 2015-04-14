@@ -12,20 +12,20 @@ export RANDFILE=/etc/onion-node/.rnd;
 
 # Variables
 
-ONIONDIR=/etc/onion-node;
-BITCOINUSER=bitcoinuser;
+readonly ONION_DIR=/etc/onion-node;
+readonly BITCOIN_USER=bitcoinuser;
 # Location of bitcoin.conf file
-BITCOINFILE=/home/"$BITCOINUSER"/.bitcoin/bitcoin.conf;
+readonly BITCOIN_FILE=/home/"${BITCOIN_USER}"/.bitcoin/bitcoin.conf;
 
 # rpcpassword variables
-OPENSSLKEY="$(openssl rand -base64 48)";
-NEWRPCPASSWORD="$(echo -n "$OPENSSLKEY" | sha256sum | head -c 64)";
-OLDRPCPASSWORD=CHANGETHISPASSWORD;
+readonly OPENSSL_KEY="$(openssl rand -base64 48)";
+readonly NEW_RPC_PASSWORD="$(echo -n "${OPENSSL_KEY}" | sha256sum | head -c 64)";
+readonly OLD_RPC_PASSWORD=CHANGETHISPASSWORD;
 
 # externalip variables
-EXTERNALIP=externalip=;
+readonly EXTERNAL_IP=externalip=;
 
-LOCKDIR=/tmp/tor-bitcoin.lock/;
+readonly LOCK_DIR=/tmp/tor-bitcoin.lock/;
 
 
 # Only run as root
@@ -36,32 +36,32 @@ fi
 
 # Check if a lockfile/LOCKDIR exists, wait max 2 hours to remove 'stale' lockfile and exit script
 TRIES=0
-while [[ -d "$LOCKDIR" ]] && [[ "$TRIES" -lt 120 ]]; do
-  echo "Temporarily not able to acquire lock on "$LOCKDIR"";
+while [[ -d "${LOCK_DIR}" ]] && [[ "$TRIES" -lt 120 ]]; do
+  echo "Temporarily not able to acquire lock on "${LOCK_DIR}"";
   echo "Other processes might be running...retry in 60 seconds";
   sleep 60;
   TRIES=$(( $TRIES +1 ));
   if [[ $TRIES -eq 120 ]]; then
-    echo "ERROR: After 2 hours the "$LOCKDIR" still exists";
+    echo "ERROR: After 2 hours the "${LOCK_DIR}" still exists";
     echo "Not a good sign";
-    echo "Removing presumably stale "$LOCKDIR"";
-    rmdir "$LOCKDIR";
+    echo "Removing presumably stale "${LOCK_DIR}"";
+    rmdir "${LOCK_DIR}";
   fi
 done;
 
 # Set lockfile/dir - mkdir is atomic
 # For portability flock or other Linux only tools are not used
-if mkdir "$LOCKDIR"; then
-  trap 'rmdir "$LOCKDIR"; exit' INT TERM EXIT; # remove LOCKDIR when script is interrupted, terminated or finished
-  echo "Successfully acquired lock on "$LOCKDIR"";
+if mkdir "${LOCK_DIR}"; then
+  trap 'rmdir "${LOCK_DIR}"; exit' INT TERM EXIT; # remove LOCKDIR when script is interrupted, terminated or finished
+  echo "Successfully acquired lock on "${LOCK_DIR}"";
 else
-  echo "Failed to acquire lock on "$LOCKDIR"";
+  echo "Failed to acquire lock on "${LOCK_DIR}"";
   exit 0;
 fi
 
 # Stop bitcoin process - execute bitcoin-control.sh script
 echo "Stopping bitcoin process";
-"$ONIONDIR"/bitcoin-control.sh;
+"${ONION_DIR}"/bitcoin-control.sh;
 echo "Bitcoin process has quit";
 
 # Change .onion address
@@ -94,13 +94,13 @@ while [[ ! -r /tmp/hidden_service/hostname ]] && [[ "$TRIES" -lt 10 ]]; do
 done;
 
 # Change rpcpassword
-sed -i "s/$OLDRPCPASSWORD/$NEWRPCPASSWORD/" "$BITCOINFILE";
+sed -i "s/"${OLD_RPC_PASSWORD}"/"${NEW_RPC_PASSWORD}"/" "${BITCOIN_FILE}";
 
 # Change externalip
 TORHOSTNAME="$( </tmp/hidden_service/hostname )";
-sed -i "s,^\("$EXTERNALIP"\).*,\1"$TORHOSTNAME"," "$BITCOINFILE";
+sed -i "s,^\("$EXTERNALIP"\).*,\1"$TORHOSTNAME"," "${BITCOIN_FILE}";
 
 # Start bitcoin process again
 echo "Starting bitcoind process";
-sudo -u "$BITCOINUSER" bitcoind -daemon >> /dev/null;
+sudo -u "${BITCOIN_USER}" bitcoind -daemon >> /dev/null;
 echo "bitcoind process started";
