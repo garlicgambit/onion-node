@@ -113,4 +113,3 @@ dphys-swapfile swapon;
 echo "Swap set to default size";
 
 echo "Bitcoin install script is done";
-rmdir "$LOCKDIR";
