@@ -3,9 +3,9 @@
 # Install tlsdate from source
 
 # Variables
-SRCDIR=/usr/local/src/tlsdate;
-TLSDATEURL=https://www.github.com/ioerror/tlsdate.git;
-LOCKDIR=/tmp/tor-bitcoin.lock/;
+SRC_DIR=/usr/local/src/tlsdate;
+TLSDATE_URL=https://www.github.com/ioerror/tlsdate.git;
+LOCK_DIR=/tmp/tor-bitcoin.lock/;
 
 # Only run as root
 if [[ "$(id -u)" != "0" ]]; then
@@ -15,8 +15,8 @@ fi
 
 # Check if a lockfile/LOCKDIR exists, wait max 30 minutes
 TRIES=0
-while [[ -d "$LOCKDIR" ]] && [[ "$TRIES" -lt 30 ]]; do
-  echo "Temporarily not able to acquire lock on "$LOCKDIR"";
+while [[ -d "${LOCK_DIR}" ]] && [[ "$TRIES" -lt 30 ]]; do
+  echo "Temporarily not able to acquire lock on "${LOCK_DIR}"";
   echo "Other processes might be running...retry in 60 seconds";
   sleep 60;
   TRIES=$(( $TRIES +1 ));
@@ -24,28 +24,28 @@ done;
 
 # Set lockfile/dir - mkdir is atomic
 # For portability flock or other Linux only tools are not used
-if mkdir "$LOCKDIR"; then
-  trap 'rmdir "$LOCKDIR"; exit' INT TERM EXIT; # remove LOCKDIR when script is interrupted, terminated or finished
-  echo "Successfully acquired lock on "$LOCKDIR"";
+if mkdir "${LOCK_DIR}"; then
+  trap 'rmdir "${LOCK_DIR}"; exit' INT TERM EXIT; # remove LOCKDIR when script is interrupted, terminated or finished
+  echo "Successfully acquired lock on "${LOCK_DIR}"";
 else
-  echo "Failed to acquire lock on "$LOCKDIR"";
+  echo "Failed to acquire lock on "${LOCK_DIR}"";
   echo "The installation script failed...run the install.sh script again to see if you get better results."
   echo "Tip: Reboot the system if the installation keeps failling."
   exit 0;
 fi
 
 # Download latest version from github.com
-echo "Download latest tlsdate version from "$TLSDATEURL"";
+echo "Download latest tlsdate version from "${TLSDATE_URL}"";
 
 TRIES=0;
 while [[ "$TRIES" -lt 10 ]]; do
-  if [[ -d "$SRCDIR" ]]; then
-    echo ""$SRCDIR" already exits...downloading tlsdate updates.";
-    cd "$SRCDIR";
+  if [[ -d "${SRC_DIR}" ]]; then
+    echo ""${SRC_DIR}" already exits...downloading tlsdate updates.";
+    cd "${SRC_DIR}";
     git fetch --all --tags && break;
   else
     echo "Downloading full tlsdate source code.";
-    git clone "$TLSDATEURL" "$SRCDIR" && break;
+    git clone "${TLSDATE_URL}" "${SRC_DIR}" && break;
   fi
   sleep 30;
   TRIES=$(( $TRIES +1 ));
@@ -60,7 +60,7 @@ echo "Downloaded latest tlsdate version";
 
 # Install tlsdate
 echo "Installing tlsdate";
-cd "$SRCDIR";
+cd "${SRC_DIR}";
 ./autogen.sh;
 ./configure;
 make -j3;
@@ -69,4 +69,4 @@ make clean;
 echo "tlsdate is installed";
 
 echo "tlsdate install script is done";
-rmdir "$LOCKDIR";
+rmdir "${LOCK_DIR}";
