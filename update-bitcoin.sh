@@ -6,15 +6,15 @@
 set -eu;
 
 # Variables
-ONION_DIR=/etc/onion-dir;
-BITCOIN_INSTALL="${ONION_DIR}"/install-scripts/install-bitcoin.sh;
-BITCOIN_SRC=/usr/local/src/bitcoin;
-LOCK_DIR=/tmp/update-bitcoin.lock/;
-LOCK_DIR2=/tmp/tor-bitcoin.lock/;
+readonly ONION_DIR=/etc/onion-dir;
+readonly BITCOIN_INSTALL="${ONION_DIR}"/install-scripts/install-bitcoin.sh;
+readonly BITCOIN_SRC=/usr/local/src/bitcoin;
+readonly LOCK_DIR=/tmp/update-bitcoin.lock/;
+readonly LOCK_DIR2=/tmp/tor-bitcoin.lock/;
 # 86400 seconds is 1 day, 864000 seconds is 10 days
-MIN_TIME=86400;
-MAX_TIME=864000;
-RANDOM_TIME="$(shuf -i "${MIN_TIME}"-"${MAX_TIME}" -n 1)";
+readonly MIN_TIME=86400;
+readonly MAX_TIME=864000;
+readonly RANDOM_TIME="$(shuf -i "${MIN_TIME}"-"${MAX_TIME}" -n 1)";
 
 
 # Only run as root
