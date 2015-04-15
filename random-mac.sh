@@ -14,9 +14,9 @@ set -eu
 
 export RANDFILE=/etc/onion-node/.rnd;
 
-MAC_START=00:;
-MAC_END=$(openssl rand -hex 5 | sed 's/\(..\)/\1:/g; s/.$//');
-MAC_NEW="${MAC_START}""${MAC_END}";
+readonly MAC_START=00:;
+readonly MAC_END=$(openssl rand -hex 5 | sed 's/\(..\)/\1:/g; s/.$//');
+readonly MAC_NEW="${MAC_START}""${MAC_END}";
 
 ifconfig eth0 down hw ether "${MAC_NEW}";
 # Sleep 10 to fix occasional ifdown/ifup "RTNETLINK answers: Network is unreachable" error.
