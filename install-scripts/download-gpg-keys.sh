@@ -12,9 +12,9 @@
 #   instead of centralized script
 
 # Variables
-MIN_TIME=60;
-MAX_TIME=300;
-RANDOM_TIME="$(shuf -i "${MIN_TIME}"-"${MAX_TIME}" -n 1)";
+readonly MIN_TIME=60;
+readonly MAX_TIME=300;
+readonly RANDOM_TIME="$(shuf -i "${MIN_TIME}"-"${MAX_TIME}" -n 1)";
 
 
 # Download gpg key Onion-node developer - Jules Mercier
