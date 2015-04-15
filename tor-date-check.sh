@@ -9,8 +9,8 @@ set -eu
 #   system time will be in the future compared to Tor consensus
 
 # Variables
-PATH=$PATH:/etc/onion-node/;
-LOCK_DIR=/tmp/tor-bitcoin.lock/;
+readonly PATH=$PATH:/etc/onion-node/;
+readonly LOCK_DIR=/tmp/tor-bitcoin.lock/;
 
 
 # Only run as root
