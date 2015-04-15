@@ -12,9 +12,9 @@
 #   instead of centralized script
 
 # Variables
-MINTIME=60;
-MAXTIME=300;
-RANDOMTIME="$(shuf -i "$MINTIME"-"$MAXTIME" -n 1)";
+MIN_TIME=60;
+MAX_TIME=300;
+RANDOM_TIME="$(shuf -i "${MIN_TIME}"-"${MAX_TIME}" -n 1)";
 
 
 # Download gpg key Onion-node developer - Jules Mercier
@@ -32,8 +32,8 @@ while [[ "$TRIES" -lt 10 ]]; do
 done;
 
 # Sleep for 60-300 seconds between gpg key lookups
-echo "Sleeping for "$RANDOMTIME" seconds";
-sleep "$RANDOMTIME";
+echo "Sleeping for "${RANDOM_TIME}" seconds";
+sleep "${RANDOM_TIME}";
 
 # Download gpg key Bitcoin developer - Wladimir J. van der Laan
 TRIES=0;
