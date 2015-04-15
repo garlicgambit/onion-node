@@ -13,14 +13,14 @@
 # - Nothing yet
 
 # Variables
-IPTABLES=/sbin/iptables;
-ECHO=/bin/echo;
-TOR_UID=`id -u debian-tor`;
-TOR_DNS_PORT=9053;
-TOR_TRANSPORT1=9550;
-TOR_TRANSPORT2=9650; # Not in use
-TOR_TRANSPORT3=9750; # Not in use
-LAN_INT=eth0;
+readonly IPTABLES=/sbin/iptables;
+readonly ECHO=/bin/echo;
+readonly TOR_UID=`id -u debian-tor`;
+readonly TOR_DNS_PORT=9053;
+readonly TOR_TRANSPORT1=9550;
+readonly TOR_TRANSPORT2=9650; # Not in use
+readonly TOR_TRANSPORT3=9750; # Not in use
+readonly LAN_INT=eth0;
 
 # Flush iptables chains
 "${ECHO}" "Flush iptables chains";
