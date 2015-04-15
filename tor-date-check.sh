@@ -10,7 +10,7 @@ set -eu
 
 # Variables
 PATH=$PATH:/etc/onion-node/;
-LOCKDIR=/tmp/tor-bitcoin.lock/;
+LOCK_DIR=/tmp/tor-bitcoin.lock/;
 
 
 # Only run as root
@@ -21,11 +21,11 @@ fi
 
 # Set lockfile/dir - mkdir is atomic
 # For portability flock or other Linux only tools are not used
-if mkdir "$LOCKDIR"; then
-  trap 'rmdir "$LOCKDIR"; exit' INT TERM EXIT; # remove LOCKDIR when script is interrupted, terminated or finished
-  echo "Successfully acquired lock on "$LOCKDIR"";
+if mkdir "${LOCK_DIR}"; then
+  trap 'rmdir "${LOCK_DIR}"; exit' INT TERM EXIT; # remove LOCKDIR when script is interrupted, terminated or finished
+  echo "Successfully acquired lock on "${LOCK_DIR}"";
 else
-  echo "Failed to acquire lock on "$LOCKDIR"";
+  echo "Failed to acquire lock on "${LOCK_DIR}"";
   exit 0;
 fi
 
