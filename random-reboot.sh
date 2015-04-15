@@ -11,11 +11,11 @@ set -eu
 # Variables
 
 # 1209600 seconds is 2 weeks, 2419200 seconds is 4 weeks
-MIN_TIME=1209600;
-MAX_TIME=2419200;
-RANDOM_TIME="$(shuf -i "${MIN_TIME}"-"${MAX_TIME}" -n 1)";
-LOCK_DIR=/tmp/randomreboot.lock/;
-LOCK_DIR2=/tmp/tor-bitcoin.lock/;
+readonly MIN_TIME=1209600;
+readonly MAX_TIME=2419200;
+readonly RANDOM_TIME="$(shuf -i "${MIN_TIME}"-"${MAX_TIME}" -n 1)";
+readonly LOCK_DIR=/tmp/randomreboot.lock/;
+readonly LOCK_DIR2=/tmp/tor-bitcoin.lock/;
 
 # Set lockfile/dir - mkdir is atomic
 # For portability flock or other Linux only tools are not used
