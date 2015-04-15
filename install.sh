@@ -6,14 +6,14 @@
 # - Nothing yet 
 
 # Variables
-DEFAULT_USER=pi;
-BITCOIN_USER=bitcoinuser;
-BITCOIN_DIR=/home/"${BITCOIN_USER}"/.bitcoin;
-ONION_DIR=/etc/onion-node;
-CONFIG_FILES="${ONION_DIR}"/config-files;
-INSTALL_SCRIPTS="${ONION_DIR}"/install-scripts;
-APT_PACKAGE=macchanger; # This package should be installed with apt-install-packages.sh
-LOCK_DIR=/tmp/tor-bitcoin.lock/;
+readonly DEFAULT_USER=pi;
+readonly BITCOIN_USER=bitcoinuser;
+readonly BITCOIN_DIR=/home/"${BITCOIN_USER}"/.bitcoin;
+readonly ONION_DIR=/etc/onion-node;
+readonly CONFIG_FILES="${ONION_DIR}"/config-files;
+readonly INSTALL_SCRIPTS="${ONION_DIR}"/install-scripts;
+readonly APT_PACKAGE=macchanger; # This package should be installed with apt-install-packages.sh
+readonly LOCK_DIR=/tmp/tor-bitcoin.lock/;
 
 # Only run as root
 if [[ "$(id -u)" != "0" ]]; then
