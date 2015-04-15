@@ -7,10 +7,10 @@ set -eu
 # Variables
 
 # 216000 seconds is 5 days
-MIN_TIME=0;
-MAX_TIME=216000;
-RANDOM_TIME="$(shuf -i "${MIN_TIME}"-"${MAX_TIME}" -n 1)";
-LOCKDIR=/tmp/random-unattended-upgrades.lock/;
+readonly MIN_TIME=0;
+readonly MAX_TIME=216000;
+readonly RANDOM_TIME="$(shuf -i "${MIN_TIME}"-"${MAX_TIME}" -n 1)";
+readonly LOCKDIR=/tmp/random-unattended-upgrades.lock/;
 
 # Set lockfile/dir - mkdir is atomic
 # For portability flock or other Linux only tools are not used
