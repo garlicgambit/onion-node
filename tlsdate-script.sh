@@ -74,12 +74,12 @@ arr[25]="www.xkcd.com"
 # tlsdate lookup - retry another host if lookup fails
 TRIES=0;
 while [[ "$TRIES" -lt 10 ]]; do
-  RANDOMNUMBER=$[ $RANDOM % 26 ];
-  RANDOMDOMAIN=${arr["$RANDOMNUMBER"]};
-  echo "tlsdate lookup: "$RANDOMDOMAIN"";
-  /usr/local/bin/tlsdate -x socks5://127.0.0.1:9250 -H "$RANDOMDOMAIN" && break;
+  RANDOM_NUMBER=$[ $RANDOM % 26 ];
+  RANDOM_DOMAIN=${arr["${RANDOM_NUMBER}"]};
+  echo "tlsdate lookup: "${RANDOM_DOMAIN}"";
+  /usr/local/bin/tlsdate -x socks5://127.0.0.1:9250 -H "${RANDOM_DOMAIN}" && break;
   # Debug tlsdate command
-  #/usr/local/bin/tlsdate -n -v -V -x socks5://127.0.0.1:9250 -H "$RANDOMDOMAIN";
+  #/usr/local/bin/tlsdate -n -v -V -x socks5://127.0.0.1:9250 -H "${RANDOM_DOMAIN}";
   sleep 30;
   TRIES=$(( $TRIES +1 ));
   if [[ "$TRIES" -eq 10 ]]; then
