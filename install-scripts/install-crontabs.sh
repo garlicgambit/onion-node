@@ -5,7 +5,7 @@ set -eu;
 # Install Onion-node crontabs in /etc/crontab
 
 # Variables
-ONION_DIR=/etc/onion-node;
+readonly ONION_DIR=/etc/onion-node;
 
 # Create backup original /etc/crontab file
 echo "Create a backup of the original /etc/crontab file";
