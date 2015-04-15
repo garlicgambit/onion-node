@@ -3,9 +3,9 @@
 # Install tlsdate from source
 
 # Variables
-SRC_DIR=/usr/local/src/tlsdate;
-TLSDATE_URL=https://www.github.com/ioerror/tlsdate.git;
-LOCK_DIR=/tmp/tor-bitcoin.lock/;
+readonly SRC_DIR=/usr/local/src/tlsdate;
+readonly TLSDATE_URL=https://www.github.com/ioerror/tlsdate.git;
+readonly LOCK_DIR=/tmp/tor-bitcoin.lock/;
 
 # Only run as root
 if [[ "$(id -u)" != "0" ]]; then
