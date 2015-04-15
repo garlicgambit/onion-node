@@ -8,13 +8,13 @@ set -eu
 # - Automatically install latest stable bitcoin version
 
 # Variables
-BITCOIN_VERSION=v0.10.0;
-ONION_DIR=/etc/onion-node;
-GPG_KEYS="${ONION_DIR}"/install-scripts/download-gpg-keys.sh;
-SRC_DIR=/usr/local/src/bitcoin;
-BTC_URL=https://www.github.com/bitcoin/bitcoin.git;
-SWAP_CONF=/etc/dphys-swapfile;
-LOCK_DIR=/tmp/tor-bitcoin.lock/;
+readonly BITCOIN_VERSION=v0.10.0;
+readonly ONION_DIR=/etc/onion-node;
+readonly GPG_KEYS="${ONION_DIR}"/install-scripts/download-gpg-keys.sh;
+readonly SRC_DIR=/usr/local/src/bitcoin;
+readonly BTC_URL=https://www.github.com/bitcoin/bitcoin.git;
+readonly SWAP_CONF=/etc/dphys-swapfile;
+readonly LOCK_DIR=/tmp/tor-bitcoin.lock/;
 
 
 # Only run as root
