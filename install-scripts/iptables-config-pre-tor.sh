@@ -13,9 +13,9 @@
 # - Nothing yet
 
 # Variables
-IPTABLES=/sbin/iptables;
-ECHO=/bin/echo;
-LAN_INT=eth0;
+readonly IPTABLES=/sbin/iptables;
+readonly ECHO=/bin/echo;
+readonly LAN_INT=eth0;
 
 # Flush iptables chains
 "${ECHO}" "Flush iptables chains";
