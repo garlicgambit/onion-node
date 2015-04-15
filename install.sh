@@ -6,14 +6,14 @@
 # - Nothing yet 
 
 # Variables
-DEFAULTUSER=pi;
-BITCOINUSER=bitcoinuser;
-BITCOINDIR=/home/"$BITCOINUSER"/.bitcoin;
-ONIONDIR=/etc/onion-node;
-CONFIGFILES="$ONIONDIR"/config-files;
-INSTALLSCRIPTS="$ONIONDIR"/install-scripts;
-APTPACKAGE=macchanger; # This package should be installed with apt-install-packages.sh
-LOCKDIR=/tmp/tor-bitcoin.lock/;
+DEFAULT_USER=pi;
+BITCOIN_USER=bitcoinuser;
+BITCOIN_DIR=/home/"${BITCOIN_USER}"/.bitcoin;
+ONION_DIR=/etc/onion-node;
+CONFIG_FILES="${ONION_DIR}"/config-files;
+INSTALL_SCRIPTS="${ONION_DIR}"/install-scripts;
+APT_PACKAGE=macchanger; # This package should be installed with apt-install-packages.sh
+LOCK_DIR=/tmp/tor-bitcoin.lock/;
 
 # Only run as root
 if [[ "$(id -u)" != "0" ]]; then
@@ -35,8 +35,8 @@ sleep 3;
 
 # Check if a lockfile/LOCKDIR exists, wait max 2 hours
 TRIES=0
-while [[ -d "$LOCKDIR" ]] && [[ "$TRIES" -lt 120 ]]; do
-  echo "Temporarily not able to acquire lock on "$LOCKDIR"";
+while [[ -d "${LOCK_DIR}" ]] && [[ "$TRIES" -lt 120 ]]; do
+  echo "Temporarily not able to acquire lock on "${LOCK_DIR}"";
   echo "Other processes might be running...retry in 60 seconds";
   sleep 60;
   TRIES=$(( $TRIES +1 ));
@@ -44,11 +44,11 @@ done;
 
 # Set lockfile/dir - mkdir is atomic
 # For portability flock or other Linux only tools are not used
-if mkdir "$LOCKDIR"; then
-  trap 'rmdir "$LOCKDIR"; exit' INT TERM EXIT; # remove LOCKDIR when script is interrupted, terminated or finished
-  echo "Successfully acquired lock on "$LOCKDIR"";
+if mkdir "${LOCK_DIR}"; then
+  trap 'rmdir "${LOCK_DIR}"; exit' INT TERM EXIT; # remove LOCKDIR when script is interrupted, terminated or finished
+  echo "Successfully acquired lock on "${LOCK_DIR}"";
 else
-  echo "Failed to acquire lock on "$LOCKDIR"";
+  echo "Failed to acquire lock on "${LOCK_DIR}"";
   echo "The installation script failed...run the install.sh script again to see if you get better results."
   echo "Tip: Reboot the system if the installation keeps failling."
   exit 0;
@@ -57,7 +57,7 @@ fi
 # Make install.sh script re-runnable
 
 # Stop bitcoin process
-"$ONIONDIR"/bitcoin-control.sh
+"${ONION_DIR}"/bitcoin-control.sh
 
 # Remove unattended-upgrades file
 if [[ -r /etc/apt/apt.conf.d/20auto-upgrades ]]; then
@@ -70,31 +70,31 @@ if [[ -r /etc/apt/apt.conf.d/50unattended-upgrades ]]; then
 fi
 
 # Remove user pi from 'adm' group
-deluser "$DEFAULTUSER" adm;
+deluser "${DEFAULT_USER}" adm;
 
 # Create bitcoinuser - this user runs the bitcoind process
-useradd --create-home "$BITCOINUSER";
+useradd --create-home "${BITCOIN_USER}";
 
 # Lockdown bitcoinuser account - disable shell access and disable login
-usermod --shell /usr/sbin/nologin --lock --expiredate 1 "$BITCOINUSER";
+usermod --shell /usr/sbin/nologin --lock --expiredate 1 "${BITCOIN_USER}";
 
 # Create directories
 mkdir -p /root/.gnupg/;
-mkdir -p "$BITCOINDIR";
+mkdir -p "${BITCOIN_DIR}";
 
 # Copy files to correct locations
-cp "$CONFIGFILES"/sysctl-kernel-hardening.conf /etc/sysctl.d/;
-cp "$CONFIGFILES"/sources.list /etc/apt/;
-cp "$CONFIGFILES"/collabora.list /etc/apt/sources.list.d/;
-cp "$CONFIGFILES"/raspi.list /etc/apt/sources.list.d/;
-cp "$CONFIGFILES"/interfaces /etc/network/;
-cp "$CONFIGFILES"/dhclient.conf /etc/dhcp/;
-cp "$CONFIGFILES"/gitconfig /root/.gitconfig;
-cp "$CONFIGFILES"/sudoers /etc/;
-cp "$CONFIGFILES"/00-discard-dhclient.conf /etc/rsyslog.d/;
-cp "$CONFIGFILES"/gpg.conf /root/.gnupg/;
-cp "$CONFIGFILES"/hkps.pool.sks-keyservers.net.pem /etc/ssl/certs/;
-cp "$CONFIGFILES"/bitcoin.conf "$BITCOINDIR";
+cp "${CONFIG_FILES}"/sysctl-kernel-hardening.conf /etc/sysctl.d/;
+cp "${CONFIG_FILES}"/sources.list /etc/apt/;
+cp "${CONFIG_FILES}"/collabora.list /etc/apt/sources.list.d/;
+cp "${CONFIG_FILES}"/raspi.list /etc/apt/sources.list.d/;
+cp "${CONFIG_FILES}"/interfaces /etc/network/;
+cp "${CONFIG_FILES}"/dhclient.conf /etc/dhcp/;
+cp "${CONFIG_FILES}"/gitconfig /root/.gitconfig;
+cp "${CONFIG_FILES}"/sudoers /etc/;
+cp "${CONFIG_FILES}"/00-discard-dhclient.conf /etc/rsyslog.d/;
+cp "${CONFIG_FILES}"/gpg.conf /root/.gnupg/;
+cp "${CONFIG_FILES}"/hkps.pool.sks-keyservers.net.pem /etc/ssl/certs/;
+cp "${CONFIG_FILES}"/bitcoin.conf "${BITCOIN_DIR}";
 
 # Set correct file/folder permissions
 chmod 644 /etc/sysctl.d/sysctl-kernel-hardening.conf;
@@ -118,15 +118,15 @@ chmod 600 /root/.gnupg/gpg.conf;
 chown -R root:root /root/.gnupg/;
 chmod 644 /etc/ssl/certs/hkps.pool.sks-keyservers.net.pem;
 chown root:root /etc/ssl/certs/hkps.pool.sks-keyservers.net.pem;
-chmod 700 "$BITCOINDIR";
-chown -R "$BITCOINUSER":"$BITCOINUSER" "$BITCOINDIR";
+chmod 700 "${BITCOIN_DIR}";
+chown -R "${BITCOIN_USER}":"${BITCOIN_USER}" "${BITCOIN_DIR}";
 
 # Run iptables-config.sh to configure iptables
-"$INSTALLSCRIPTS"/iptables-config-pre-tor.sh;
-iptables-save > "$ONIONDIR"/iptables.rules;
+"${INSTALL_SCRIPTS}"/iptables-config-pre-tor.sh;
+iptables-save > "${ONION_DIR}"/iptables.rules;
 
 # Remove unnecessary packages - assume yes '-y'
-"$INSTALLSCRIPTS"/apt-remove.sh;
+"${INSTALL_SCRIPTS}"/apt-remove.sh;
 
 # Configure network interface to go up
 ifdown eth0;
@@ -141,28 +141,28 @@ echo "";
 sleep 120;
 
 # Install latest updates and Tor - assume yes '-y'
-"$INSTALLSCRIPTS"/apt-install-tor.sh;
+"${INSTALL_SCRIPTS}"/apt-install-tor.sh;
 
 # Allow Tor proces to connect to the web
-"$INSTALLSCRIPTS"/iptables-config.sh;
-iptables-save > "$ONIONDIR"/iptables.rules;
+"${INSTALL_SCRIPTS}"/iptables-config.sh;
+iptables-save > "${ONION_DIR}"/iptables.rules;
 
 # Put torrc at correct location
 cp /etc/tor/torrc /etc/tor/torrc-backup;
-cp "$CONFIGFILES"/torrc /etc/tor/torrc;
+cp "${CONFIG_FILES}"/torrc /etc/tor/torrc;
 chmod 644 /etc/tor/torrc;
 chown debian-tor:debian-tor /etc/tor/torrc;
 /etc/init.d/tor restart;
 sleep 30;
 
 # Run tor-date-check
-rmdir "$LOCKDIR"; # tor-date-check.sh has it's own lockfile
-"$ONIONDIR"/tor-date-check.sh;
+rmdir "${LOCK_DIR}"; # tor-date-check.sh has it's own lockfile
+"${ONION_DIR}"/tor-date-check.sh;
 
 # Check if a lockfile/LOCKDIR exists, wait max 2 hours
 TRIES=0
-while [[ -d "$LOCKDIR" ]] && [[ "$TRIES" -lt 120 ]]; do
-  echo "Temporarily not able to acquire lock on "$LOCKDIR"";
+while [[ -d "${LOCK_DIR}" ]] && [[ "$TRIES" -lt 120 ]]; do
+  echo "Temporarily not able to acquire lock on "${LOCK_DIR}"";
   echo "Other processes might be running...retry in 60 seconds";
   sleep 60;
   TRIES=$(( $TRIES +1 ));
@@ -170,11 +170,11 @@ done;
 
 # Set lockfile/dir - mkdir is atomic
 # For portability flock or other Linux only tools are not used
-if mkdir "$LOCKDIR"; then
-  trap 'rmdir "$LOCKDIR"; exit' INT TERM EXIT; # remove LOCKDIR when script is interrupted, terminated or finished
-  echo "Successfully acquired lock on "$LOCKDIR"";
+if mkdir "${LOCK_DIR}"; then
+  trap 'rmdir "${LOCK_DIR}"; exit' INT TERM EXIT; # remove LOCKDIR when script is interrupted, terminated or finished
+  echo "Successfully acquired lock on "${LOCK_DIR}"";
 else
-  echo "Failed to acquire lock on "$LOCKDIR"";
+  echo "Failed to acquire lock on "${LOCK_DIR}"";
   echo "The installation script failed...run the install.sh script again to see if you get better results."
   echo "Tip: Reboot the system if the installation keeps failling."
   exit 0;
@@ -185,13 +185,13 @@ fi
 # So the apt-get requests might fail the first time, because no Tor circuit is available
 # Hopefully apt will work in a later run...
 TRIES=0
-while [[ ! $(dpkg-query -W "$APTPACKAGE" 2>/dev/null ) ]] && [[ "$TRIES" -lt 20 ]]; do
-  echo ""$APTPACKAGE" is not installed...will run apt-install-packages.sh";
-  "$INSTALLSCRIPTS"/apt-install-packages.sh;
+while [[ ! $(dpkg-query -W "${APT_PACKAGE}" 2>/dev/null ) ]] && [[ "$TRIES" -lt 20 ]]; do
+  echo ""${APT_PACKAGE}" is not installed...will run apt-install-packages.sh";
+  "${INSTALL_SCRIPTS}"/apt-install-packages.sh;
   sleep 30;
   TRIES=$(( $TRIES +1 ));
   if [[ $TRIES -eq 20 ]]; then
-    echo "ERROR: "$APTPACKAGE" is not installed";
+    echo "ERROR: "${APT_PACKAGE}" is not installed";
     echo "The installation has failed...probably due to network/Tor issues";
     echo "Check network/Tor connection and run the installer again and see if you get better results";
     echo "The installation is aborted";
@@ -200,16 +200,16 @@ while [[ ! $(dpkg-query -W "$APTPACKAGE" 2>/dev/null ) ]] && [[ "$TRIES" -lt 20 
 done;
 
 # Download GPG keys
-"$INSTALLSCRIPTS"/download-gpg-keys.sh;
+"${INSTALL_SCRIPTS}"/download-gpg-keys.sh;
 
 # Install tlsdate from source
-rmdir "$LOCKDIR"; # install-tlsdate.sh has it's own lockfile
-"$INSTALLSCRIPTS"/install-tlsdate.sh;
+rmdir "${LOCK_DIR}"; # install-tlsdate.sh has it's own lockfile
+"${INSTALL_SCRIPTS}"/install-tlsdate.sh;
 
 # Check if a lockfile/LOCKDIR exists, wait max 2 hours
 TRIES=0
-while [[ -d "$LOCKDIR" ]] && [[ "$TRIES" -lt 120 ]]; do
-  echo "Temporarily not able to acquire lock on "$LOCKDIR"";
+while [[ -d "${LOCK_DIR}" ]] && [[ "$TRIES" -lt 120 ]]; do
+  echo "Temporarily not able to acquire lock on "${LOCK_DIR}"";
   echo "Other processes might be running...retry in 60 seconds";
   sleep 60;
   TRIES=$(( $TRIES +1 ));
@@ -217,24 +217,24 @@ done;
 
 # Set lockfile/dir - mkdir is atomic
 # For portability flock or other Linux only tools are not used
-if mkdir "$LOCKDIR"; then
-  trap 'rmdir "$LOCKDIR"; exit' INT TERM EXIT; # remove LOCKDIR when script is interrupted, terminated or finished
-  echo "Successfully acquired lock on "$LOCKDIR"";
+if mkdir "${LOCK_DIR}"; then
+  trap 'rmdir "${LOCK_DIR}"; exit' INT TERM EXIT; # remove LOCKDIR when script is interrupted, terminated or finished
+  echo "Successfully acquired lock on "${LOCK_DIR}"";
 else
-  echo "Failed to acquire lock on "$LOCKDIR"";
+  echo "Failed to acquire lock on "${LOCK_DIR}"";
   echo "The installation script failed...run the install.sh script again to see if you get better results."
   echo "Tip: Reboot the system if the installation keeps failling."
   exit 0;
 fi
 
 # Install bitcoin from source
-rmdir "$LOCKDIR"; # install-bitcoin.sh has it's own lockfile
-"$INSTALLSCRIPTS"/install-bitcoin.sh;
+rmdir "${LOCK_DIR}"; # install-bitcoin.sh has it's own lockfile
+"${INSTALL_SCRIPTS}"/install-bitcoin.sh;
 
 # Check if a lockfile/LOCKDIR exists, wait max 2 hours
 TRIES=0
-while [[ -d "$LOCKDIR" ]] && [[ "$TRIES" -lt 120 ]]; do
-  echo "Temporarily not able to acquire lock on "$LOCKDIR"";
+while [[ -d "${LOCK_DIR}" ]] && [[ "$TRIES" -lt 120 ]]; do
+  echo "Temporarily not able to acquire lock on "${LOCK_DIR}"";
   echo "Other processes might be running...retry in 60 seconds";
   sleep 60;
   TRIES=$(( $TRIES +1 ));
@@ -242,27 +242,27 @@ done;
 
 # Set lockfile/dir - mkdir is atomic
 # For portability flock or other Linux only tools are not used
-if mkdir "$LOCKDIR"; then
-  trap 'rmdir "$LOCKDIR"; exit' INT TERM EXIT; # remove LOCKDIR when script is interrupted, terminated or finished
-  echo "Successfully acquired lock on "$LOCKDIR"";
+if mkdir "${LOCK_DIR}"; then
+  trap 'rmdir "${LOCK_DIR}"; exit' INT TERM EXIT; # remove LOCKDIR when script is interrupted, terminated or finished
+  echo "Successfully acquired lock on "${LOCK_DIR}"";
 else
-  echo "Failed to acquire lock on "$LOCKDIR"";
+  echo "Failed to acquire lock on "${LOCK_DIR}"";
   echo "The installation script failed...run the install.sh script again to see if you get better results."
   echo "Tip: Reboot the system if the installation keeps failling."
   exit 0;
 fi
 
 # Install bitcoin node crontabs
-"$INSTALLSCRIPTS"/install-crontabs.sh;
+"${INSTALL_SCRIPTS}"/install-crontabs.sh;
 
 # Copy dhcp-script-bitcoin-node to correct location
-cp "$CONFIGFILES"/dhcp-script-bitcoin-node /etc/dhcp/dhclient-exit-hooks.d/;
+cp "${CONFIG_FILES}"/dhcp-script-bitcoin-node /etc/dhcp/dhclient-exit-hooks.d/;
 chmod 744 /etc/dhcp/dhclient-exit-hooks.d/dhcp-script-bitcoin-node;
 chown root:root /etc/dhcp/dhclient-exit-hooks.d/dhcp-script-bitcoin-node;
 
 # Copy unattended-upgrade files to correct location
-cp "$CONFIGFILES"/20auto-upgrades /etc/apt/apt.conf.d/;
-cp "$CONFIGFILES"/50unattended-upgrades /etc/apt/apt.conf.d/;
+cp "${CONFIG_FILES}"/20auto-upgrades /etc/apt/apt.conf.d/;
+cp "${CONFIG_FILES}"/50unattended-upgrades /etc/apt/apt.conf.d/;
 chmod 644 /etc/apt/apt.conf.d/20auto-upgrades /etc/apt/apt.conf.d/50unattended-upgrades;
 chown root:root /etc/apt/apt.conf.d/20auto-upgrades /etc/apt/apt.conf.d/50unattended-upgrades;
 
