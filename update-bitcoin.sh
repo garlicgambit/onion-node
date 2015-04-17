@@ -3,7 +3,8 @@
 # This script will update the Onion node to the latest stable Bitcoin release
 # It will update at a random 1 to 10 day interval
 
-set -eu;
+set -o errexit # exit script when a command fails
+set -o nounset # exit script when a variable is not set
 
 # Variables
 readonly ONION_DIR=/etc/onion-dir;
