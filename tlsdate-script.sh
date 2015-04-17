@@ -15,6 +15,9 @@
 # - No sanity checking on time results
 # - Single point of failure; not checking time from multiple sources and comparing them
 
+set -o errexit # exit script when a command fails
+set -o nounset # exit script when a variable is not set
+
 # Only run as root
 if [[ "$(id -u)" != "0" ]]; then
   echo "ERROR: Must be run as root...exiting script";
