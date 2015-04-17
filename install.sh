@@ -5,6 +5,9 @@
 # To do:
 # - Nothing yet 
 
+set -o errexit # exit script when a command fails
+set -o nounset # exit script when a variable is not set
+
 # Variables
 readonly DEFAULT_USER=pi;
 readonly BITCOIN_USER=bitcoinuser;
