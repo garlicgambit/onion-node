@@ -1,8 +1,9 @@
 #!/bin/bash
 
-set -eu;
-
 # Install Onion-node crontabs in /etc/crontab
+
+set -o errexit # exit script when a command fails
+set -o nounset # exit script when a variable is not set
 
 # Variables
 readonly ONION_DIR=/etc/onion-node;
