@@ -1,8 +1,9 @@
 #!/bin/bash
 
-set -eu
-
 # Check if Tor and bitcoind process are running, if not start them.
+
+set -o errexit # exit script when a command fails
+set -o nounset # exit script when a variable is not set
 
 # Variables
 readonly BITCOIN_USER=bitcoinuser;
