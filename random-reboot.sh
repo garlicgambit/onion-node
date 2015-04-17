@@ -1,12 +1,13 @@
 #!/bin/bash
 
-set -eu
-
 # Automatically reboot the system every 2-4 weeks
 # This is an unattended device, so a regular reboot might fix some system issues
 
 # To do:
 # - Nothing yet
+
+set -o errexit # exit script when a command fails
+set -o nounset # exit script when a variable is not set
 
 # Variables
 
