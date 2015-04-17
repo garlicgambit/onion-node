@@ -5,8 +5,8 @@ set -eu
 # Check if Tor and bitcoind process are running, if not start them.
 
 # Variables
-BITCOINUSER=bitcoinuser;
-LOCKDIR=/tmp/tor-bitcoin.lock/;
+readonly BITCOIN_USER=bitcoinuser;
+readonly LOCK_DIR=/tmp/tor-bitcoin.lock/;
 
 
 # Only run as root
@@ -18,15 +18,15 @@ fi
 # Check if Tor process is running - start Tor if it's not running
 # Only proceed if no lockfile is set
 if [[ "$(pgrep "tor" -u debian-tor >> /dev/null && echo "Running")" != "Running" ]]; then
-  if mkdir "$LOCKDIR"; then
-    trap 'rmdir "$LOCKDIR"; exit' INT TERM EXIT;
-    echo "Successfully acquired lock on "$LOCKDIR"";
+  if mkdir "${LOCK_DIR}"; then
+    trap 'rmdir "${LOCK_DIR}"; exit' INT TERM EXIT;
+    echo "Successfully acquired lock on "${LOCK_DIR}"";
     echo "Tor is not running...starting Tor";
     /etc/init.d/tor start;
     sleep 30;
-    rmdir "$LOCKDIR";
+    rmdir "${LOCK_DIR}";
   else
-    echo "Failed to acquire lock on "$LOCKDIR"";
+    echo "Failed to acquire lock on "${LOCK_DIR}"";
     exit 0;
   fi
 fi
@@ -34,14 +34,14 @@ fi
 # Check if bitcoind process is running - start bitcoind if it's not running
 # Only proceed if no lockfile is set
 if [[ "$(pgrep "bitcoind" >> /dev/null && echo "Running")" != "Running" ]]; then
-  if mkdir "$LOCKDIR"; then
-    trap 'rmdir "$LOCKDIR"; exit' INT TERM EXIT;
-    echo "Successfully acquired lock on "$LOCKDIR"";
+  if mkdir "${LOCK_DIR}"; then
+    trap 'rmdir "${LOCK_DIR}"; exit' INT TERM EXIT;
+    echo "Successfully acquired lock on "${LOCK_DIR}"";
     echo "bitcoind is not running...starting bitcoind";
-    sudo -u "$BITCOINUSER" bitcoind -daemon >> /dev/null;
-    rmdir "$LOCKDIR";
+    sudo -u "${BITCOIN_USER}" bitcoind -daemon >> /dev/null;
+    rmdir "${LOCK_DIR}";
   else
-    echo "Failed to acquire lock on "$LOCKDIR"";
+    echo "Failed to acquire lock on "${LOCK_DIR}"";
     exit 0;
   fi
 fi

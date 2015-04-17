@@ -11,25 +11,25 @@ set -eu
 # Variables
 
 # 1209600 seconds is 2 weeks, 2419200 seconds is 4 weeks
-MINTIME=1209600;
-MAXTIME=2419200;
-RANDOMTIME="$(shuf -i "$MINTIME"-"$MAXTIME" -n 1)";
-LOCKDIR=/tmp/randomreboot.lock/;
-LOCKDIR2=/tmp/tor-bitcoin.lock/;
+readonly MIN_TIME=1209600;
+readonly MAX_TIME=2419200;
+readonly RANDOM_TIME="$(shuf -i "${MIN_TIME}"-"${MAX_TIME}" -n 1)";
+readonly LOCK_DIR=/tmp/randomreboot.lock/;
+readonly LOCK_DIR2=/tmp/tor-bitcoin.lock/;
 
 # Set lockfile/dir - mkdir is atomic
 # For portability flock or other Linux only tools are not used
-if mkdir "$LOCKDIR"; then
-  trap 'rmdir "$LOCKDIR"; exit' INT TERM EXIT; # remove LOCKDIR when script is interrupted, terminated or finished
-  echo "Successfully acquired lock on "$LOCKDIR"";
+if mkdir "${LOCK_DIR}"; then
+  trap 'rmdir "${LOCK_DIR}"; exit' INT TERM EXIT; # remove LOCKDIR when script is interrupted, terminated or finished
+  echo "Successfully acquired lock on "${LOCK_DIR}"";
 else
-  echo "Failed to acquire lock on "$LOCKDIR"";
+  echo "Failed to acquire lock on "${LOCK_DIR}"";
   exit 0;
 fi
 
 # Sleep for 2-4 weeks
-echo "Sleeping for "$RANDOMTIME" seconds";
-sleep "$RANDOMTIME";
+echo "Sleeping for "${RANDOM_TIME}" seconds";
+sleep "${RANDOM_TIME}";
 
 # Check if other processes are running at this point
 # Like:
@@ -38,21 +38,21 @@ sleep "$RANDOMTIME";
 # - Tor date check
 #
 # Check if a lockfile/LOCKDIR exists, wait max 2 hours
-TRIES=0
-while [[ -d "$LOCKDIR2" ]] && [[ "$TRIES" -lt 120 ]]; do
-  echo "Temporarily not able to acquire lock on "$LOCKDIR2"";
+tries=0
+while [[ -d "${LOCK_DIR2}" ]] && [[ "${tries}" -lt 120 ]]; do
+  echo "Temporarily not able to acquire lock on "${LOCK_DIR}2"";
   echo "Other processes might be running...retry in 60 seconds";
   sleep 60;
-  TRIES=$(( $TRIES +1 ));
+  tries=$(( ${tries} +1 ));
 done;
 
 # Set lockfile/dir - mkdir is atomic
 # For portability flock or other Linux only tools are not used
-if mkdir "$LOCKDIR2"; then
-  trap 'rmdir "$LOCKDIR"; rmdir "$LOCKDIR2"; exit' INT TERM EXIT; # remove LOCKDIR when script is interrupted, terminated or finished
-  echo "Successfully acquired lock on "$LOCKDIR2"";
+if mkdir "${LOCK_DIR2}"; then
+  trap 'rmdir "${LOCK_DIR}"; rmdir "${LOCK_DIR2}"; exit' INT TERM EXIT; # remove LOCKDIR when script is interrupted, terminated or finished
+  echo "Successfully acquired lock on "${LOCK_DIR2}"";
 else
-  echo "Failed to acquire lock on "$LOCKDIR2"";
+  echo "Failed to acquire lock on "${LOCK_DIR2}"";
   exit 0;
 fi
 
