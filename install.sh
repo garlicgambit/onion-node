@@ -79,7 +79,10 @@ if id --groups --name "${DEFAULT_USER}" | grep -q adm; then
 fi
 
 # Create bitcoinuser - this user runs the bitcoind process
-useradd --create-home "${BITCOIN_USER}";
+if ! id "${BITCOIN_USER}" >> /dev/null; then
+  echo "Add ${BITCOIN_USER} to Onion Node"
+  useradd --create-home "${BITCOIN_USER}"
+fi
 
 # Lockdown bitcoinuser account - disable shell access and disable login
 usermod --shell /usr/sbin/nologin --lock --expiredate 1 "${BITCOIN_USER}";
