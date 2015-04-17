@@ -41,8 +41,8 @@ else
 fi
 
 # Check if Tor has consensus and check if Tor has an invalid certificate date
-TRIES=0;
-while [[ $(anondate --has-consensus) == "false" ]] && [[ "$TRIES" -lt 40 ]]; do
+tries=0;
+while [[ $(anondate --has-consensus) == "false" ]] && [[ "${tries}" -lt 40 ]]; do
   if [[ "$(anondate --tor-cert-lifetime-invalid | grep "wrong")" ]]; then
     echo "Time on Tor certificate NOT valid...setting time from Tor certificate";
     echo "Stopping Tor";
@@ -61,15 +61,15 @@ while [[ $(anondate --has-consensus) == "false" ]] && [[ "$TRIES" -lt 40 ]]; do
   else
     echo "Tor has no consensus or Tor certificate time yet...waiting for 30 seconds";
     sleep 30;
-    TRIES=$(( $TRIES +1 ));
-      if [[ "$TRIES" -eq 20 ]]; then
+    tries=$(( ${tries} +1 ));
+      if [[ "${tries}" -eq 20 ]]; then
         echo "Restart Tor to get Tor consensus";
         /etc/init.d/tor restart;
         echo "Tor is restarted";
         echo "Sleeping for 30 seconds to let the Tor process restart smoothly";
         sleep 30;
       fi
-      if [[ "$TRIES" -eq 40 ]]; then
+      if [[ "${tries}" -eq 40 ]]; then
         echo "Tor consensus not loaded...exiting script";
         exit 0;
       fi

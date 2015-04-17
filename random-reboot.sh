@@ -38,12 +38,12 @@ sleep "${RANDOM_TIME}";
 # - Tor date check
 #
 # Check if a lockfile/LOCKDIR exists, wait max 2 hours
-TRIES=0
-while [[ -d "${LOCK_DIR2}" ]] && [[ "$TRIES" -lt 120 ]]; do
+tries=0
+while [[ -d "${LOCK_DIR2}" ]] && [[ "${tries}" -lt 120 ]]; do
   echo "Temporarily not able to acquire lock on "${LOCK_DIR}2"";
   echo "Other processes might be running...retry in 60 seconds";
   sleep 60;
-  TRIES=$(( $TRIES +1 ));
+  tries=$(( ${tries} +1 ));
 done;
 
 # Set lockfile/dir - mkdir is atomic

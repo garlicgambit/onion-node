@@ -34,12 +34,12 @@ echo "";
 sleep 3;
 
 # Check if a lockfile/LOCKDIR exists, wait max 2 hours
-TRIES=0
-while [[ -d "${LOCK_DIR}" ]] && [[ "$TRIES" -lt 120 ]]; do
+tries=0
+while [[ -d "${LOCK_DIR}" ]] && [[ "${tries}" -lt 120 ]]; do
   echo "Temporarily not able to acquire lock on "${LOCK_DIR}"";
   echo "Other processes might be running...retry in 60 seconds";
   sleep 60;
-  TRIES=$(( $TRIES +1 ));
+  tries=$(( ${tries} +1 ));
 done;
 
 # Set lockfile/dir - mkdir is atomic
@@ -160,12 +160,12 @@ rmdir "${LOCK_DIR}"; # tor-date-check.sh has it's own lockfile
 "${ONION_DIR}"/tor-date-check.sh;
 
 # Check if a lockfile/LOCKDIR exists, wait max 2 hours
-TRIES=0
-while [[ -d "${LOCK_DIR}" ]] && [[ "$TRIES" -lt 120 ]]; do
+tries=0
+while [[ -d "${LOCK_DIR}" ]] && [[ "${tries}" -lt 120 ]]; do
   echo "Temporarily not able to acquire lock on "${LOCK_DIR}"";
   echo "Other processes might be running...retry in 60 seconds";
   sleep 60;
-  TRIES=$(( $TRIES +1 ));
+  tries=$(( ${tries} +1 ));
 done;
 
 # Set lockfile/dir - mkdir is atomic
@@ -184,13 +184,13 @@ fi
 # Sometimes Tor is really slow to setup a circuit and needs a request to get started
 # So the apt-get requests might fail the first time, because no Tor circuit is available
 # Hopefully apt will work in a later run...
-TRIES=0
-while [[ ! $(dpkg-query -W "${APT_PACKAGE}" 2>/dev/null ) ]] && [[ "$TRIES" -lt 20 ]]; do
+tries=0
+while [[ ! $(dpkg-query -W "${APT_PACKAGE}" 2>/dev/null ) ]] && [[ "${tries}" -lt 20 ]]; do
   echo ""${APT_PACKAGE}" is not installed...will run apt-install-packages.sh";
   "${INSTALL_SCRIPTS}"/apt-install-packages.sh;
   sleep 30;
-  TRIES=$(( $TRIES +1 ));
-  if [[ $TRIES -eq 20 ]]; then
+  tries=$(( ${tries} +1 ));
+  if [[ $tries -eq 20 ]]; then
     echo "ERROR: "${APT_PACKAGE}" is not installed";
     echo "The installation has failed...probably due to network/Tor issues";
     echo "Check network/Tor connection and run the installer again and see if you get better results";
@@ -207,12 +207,12 @@ rmdir "${LOCK_DIR}"; # install-tlsdate.sh has it's own lockfile
 "${INSTALL_SCRIPTS}"/install-tlsdate.sh;
 
 # Check if a lockfile/LOCKDIR exists, wait max 2 hours
-TRIES=0
-while [[ -d "${LOCK_DIR}" ]] && [[ "$TRIES" -lt 120 ]]; do
+tries=0
+while [[ -d "${LOCK_DIR}" ]] && [[ "${tries}" -lt 120 ]]; do
   echo "Temporarily not able to acquire lock on "${LOCK_DIR}"";
   echo "Other processes might be running...retry in 60 seconds";
   sleep 60;
-  TRIES=$(( $TRIES +1 ));
+  tries=$(( ${tries} +1 ));
 done;
 
 # Set lockfile/dir - mkdir is atomic
@@ -232,12 +232,12 @@ rmdir "${LOCK_DIR}"; # install-bitcoin.sh has it's own lockfile
 "${INSTALL_SCRIPTS}"/install-bitcoin.sh;
 
 # Check if a lockfile/LOCKDIR exists, wait max 2 hours
-TRIES=0
-while [[ -d "${LOCK_DIR}" ]] && [[ "$TRIES" -lt 120 ]]; do
+tries=0
+while [[ -d "${LOCK_DIR}" ]] && [[ "${tries}" -lt 120 ]]; do
   echo "Temporarily not able to acquire lock on "${LOCK_DIR}"";
   echo "Other processes might be running...retry in 60 seconds";
   sleep 60;
-  TRIES=$(( $TRIES +1 ));
+  tries=$(( ${tries} +1 ));
 done;
 
 # Set lockfile/dir - mkdir is atomic

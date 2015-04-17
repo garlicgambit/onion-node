@@ -24,12 +24,12 @@ if [[ "$(id -u)" != "0" ]]; then
 fi
 
 # Check if a lockfile/LOCKDIR exists, wait max 30 minutes
-TRIES=0
-while [[ -d "${LOCK_DIR}" ]] && [[ "$TRIES" -lt 30 ]]; do
+tries=0
+while [[ -d "${LOCK_DIR}" ]] && [[ "${tries}" -lt 30 ]]; do
   echo "Temporarily not able to acquire lock on "${LOCK_DIR}"";
   echo "Other processes might be running...retry in 60 seconds";
   sleep 60;
-  TRIES=$(( $TRIES +1 ));
+  tries=$(( ${tries} +1 ));
 done;
 
 # Set lockfile/dir - mkdir is atomic
@@ -50,8 +50,8 @@ fi
 # Download latest version from github.com
 echo "Download latest version from "${BTC_URL}"";
 
-TRIES=0;
-while [[ "$TRIES" -lt 10 ]]; do
+tries=0;
+while [[ "${tries}" -lt 10 ]]; do
   if [[ -d "${SRC_DIR}" ]]; then
     echo ""${SRC_DIR}" already exits...downloading Bitcoin updates.";
     cd "${SRC_DIR}";
@@ -61,8 +61,8 @@ while [[ "$TRIES" -lt 10 ]]; do
     git clone "${BTC_URL}" "${SRC_DIR}" && break;
   fi
   sleep 30;
-  TRIES=$(( $TRIES +1 ));
-  if [[ "$TRIES" -eq 10 ]]; then
+  tries=$(( ${tries} +1 ));
+  if [[ "${tries}" -eq 10 ]]; then
     echo "ERROR: The Bitcoin download script has failed.";
     echo "The script will exit now.";
     exit 0;

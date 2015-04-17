@@ -44,12 +44,12 @@ sleep "${RANDOM_TIME}";
 # - Tor date check
 #
 # Check if a lockfile/LOCKDIR2 exists, wait max 2 hours
-TRIES=0
-while [[ -d "${LOCK_DIR2}" ]] && [[ "$TRIES" -lt 120 ]]; do
+tries=0
+while [[ -d "${LOCK_DIR2}" ]] && [[ "${tries}" -lt 120 ]]; do
   echo "Temporarily not able to acquire lock on "${LOCK_DIR2}"";
   echo "Other processes might be running...retry in 60 seconds";
   sleep 60;
-  TRIES=$(( $TRIES +1 ));
+  tries=$(( ${tries} +1 ));
 done;
 
 # Set lockfile/dir - mkdir is atomic
@@ -63,25 +63,25 @@ else
 fi
 
 # Fetch latest Bitcoin updates
-TRIES=0;
-while [[ "$TRIES" -lt 10 ]]; do
+tries=0;
+while [[ "${tries}" -lt 10 ]]; do
   cd "${BITCOIN_SRC}";
   git fetch --all --tags && break;
   sleep 30;
-  TRIES=$(( $TRIES +1 ));
-  if [[ "$TRIES" -eq 10 ]]; then
+  tries=$(( ${tries} +1 ));
+  if [[ "${tries}" -eq 10 ]]; then
     echo "ERROR: The Bitcoin update has failed.";
   fi
 done;
 
 # Fetch latest Onion node updates
-TRIES=0;
-while [[ "$TRIES" -lt 10 ]]; do
+tries=0;
+while [[ "${tries}" -lt 10 ]]; do
   cd "${ONION_DIR}";
   git fetch --all --tags && break;
   sleep 30;
-  TRIES=$(( $TRIES +1 ));
-  if [[ "$TRIES" -eq 10 ]]; then
+  tries=$(( ${tries} +1 ));
+  if [[ "${tries}" -eq 10 ]]; then
     echo "ERROR: The Onion node update has failed.";
   fi
 done;

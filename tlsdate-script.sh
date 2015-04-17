@@ -23,12 +23,12 @@ fi
 
 # Check if tor is available 
 # We do not start the Tor process here, that is done with the refresh .onion address script
-TRIES=0;
-while [[ "$(pgrep "tor" -u debian-tor >> /dev/null && echo "Running")" != "Running" ]] && [[ "$TRIES" -lt 8 ]]; do
+tries=0;
+while [[ "$(pgrep "tor" -u debian-tor >> /dev/null && echo "Running")" != "Running" ]] && [[ "${tries}" -lt 8 ]]; do
   echo "Tor is not running...waiting for 30 seconds";
   sleep 30;
-  TRIES=$(( $TRIES +1 ));
-  if [[ "$TRIES" -eq 8 ]]; then
+  tries=$(( ${tries} +1 ));
+  if [[ "${tries}" -eq 8 ]]; then
     echo "Tor is not running...checking at a later time...exiting script";
     exit 0;
   fi 
@@ -72,8 +72,8 @@ arr[25]="www.xkcd.com"
 # + more...
 
 # tlsdate lookup - retry another host if lookup fails
-TRIES=0;
-while [[ "$TRIES" -lt 10 ]]; do
+tries=0;
+while [[ "${tries}" -lt 10 ]]; do
   RANDOM_NUMBER=$[ $RANDOM % 26 ];
   RANDOM_DOMAIN=${arr["${RANDOM_NUMBER}"]};
   echo "tlsdate lookup: "${RANDOM_DOMAIN}"";
@@ -81,8 +81,8 @@ while [[ "$TRIES" -lt 10 ]]; do
   # Debug tlsdate command
   #/usr/local/bin/tlsdate -n -v -V -x socks5://127.0.0.1:9250 -H "${RANDOM_DOMAIN}";
   sleep 30;
-  TRIES=$(( $TRIES +1 ));
-  if [[ "$TRIES" -eq 10 ]]; then
+  tries=$(( ${tries} +1 ));
+  if [[ "${tries}" -eq 10 ]]; then
     echo "ERROR: The tlsdate lookup has failed.";
     echo "The script will exit now.";
     exit 0;

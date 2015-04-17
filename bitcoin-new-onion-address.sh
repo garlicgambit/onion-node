@@ -35,13 +35,13 @@ if [[ "$(id -u)" != "0" ]]; then
 fi
 
 # Check if a lockfile/LOCKDIR exists, wait max 2 hours to remove 'stale' lockfile and exit script
-TRIES=0
-while [[ -d "${LOCK_DIR}" ]] && [[ "$TRIES" -lt 120 ]]; do
+tries=0
+while [[ -d "${LOCK_DIR}" ]] && [[ "${tries}" -lt 120 ]]; do
   echo "Temporarily not able to acquire lock on "${LOCK_DIR}"";
   echo "Other processes might be running...retry in 60 seconds";
   sleep 60;
-  TRIES=$(( $TRIES +1 ));
-  if [[ $TRIES -eq 120 ]]; then
+  tries=$(( ${tries} +1 ));
+  if [[ $tries -eq 120 ]]; then
     echo "ERROR: After 2 hours the "${LOCK_DIR}" still exists";
     echo "Not a good sign";
     echo "Removing presumably stale "${LOCK_DIR}"";
@@ -77,17 +77,17 @@ echo "Sleeping for 30 seconds to let the Tor process start smoothly";
 sleep 30;
 
 # Check if Tor hostname file exists, if not sleep for a while
-TRIES=0
-while [[ ! -r /tmp/hidden_service/hostname ]] && [[ "$TRIES" -lt 10 ]]; do
+tries=0
+while [[ ! -r /tmp/hidden_service/hostname ]] && [[ "${tries}" -lt 10 ]]; do
   echo "Tor hostname not available...waiting for 30 seconds";
   sleep 30;
-  TRIES=$(( $TRIES +1 ));
-  if [[ $TRIES -eq 5 ]]; then
+  tries=$(( ${tries} +1 ));
+  if [[ $tries -eq 5 ]]; then
     echo "Tor hidden service not created yet...restarting Tor";
     /etc/init.d/tor restart;
     sleep 30;
   fi
-  if [[ $TRIES -eq 10 ]]; then
+  if [[ $tries -eq 10 ]]; then
     echo "Tor hidden service not created properly...exiting script";
     exit 0;
   fi
