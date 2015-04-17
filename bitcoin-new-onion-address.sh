@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -eu
+set -o errexit # exit script when a command fails
+set -o nounset # exit script when a variable is not set
 
 # This script is used to set (fresh) values in bitcoin.conf file
 
