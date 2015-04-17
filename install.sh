@@ -73,7 +73,10 @@ if [[ -r /etc/apt/apt.conf.d/50unattended-upgrades ]]; then
 fi
 
 # Remove user pi from 'adm' group
-deluser "${DEFAULT_USER}" adm;
+if id --groups --name "${DEFAULT_USER}" | grep -q adm; then
+  echo "Remove ${DEFAULT_USER} from adm group"
+  deluser "${DEFAULT_USER}" adm;
+fi
 
 # Create bitcoinuser - this user runs the bitcoind process
 useradd --create-home "${BITCOIN_USER}";
