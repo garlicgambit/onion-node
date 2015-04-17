@@ -1,12 +1,13 @@
 #!/bin/bash
 
-set -eu
-
 # This script tries to bootstrap the current time in order to get Tor up and running.
 
 # To Do:
 # - Issues might arise when the system has been offline for a while + Tor consensus file exists + Tor hasn't established a circuit
 #   system time will be in the future compared to Tor consensus
+
+set -o errexit # exit script when a command fails
+set -o nounset # exit script when a variable is not set
 
 # Variables
 readonly PATH=$PATH:/etc/onion-node/;

@@ -1,11 +1,12 @@
 #!/bin/bash
 
-set -eu
-
 # Install bitcoin from source
 
 # To do:
 # - Automatically install latest stable bitcoin version
+
+set -o errexit # exit script when a command fails
+set -o nounset # exit script when a variable is not set
 
 # Variables
 readonly BITCOIN_VERSION=v0.10.0;

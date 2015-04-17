@@ -1,6 +1,5 @@
 #!/bin/bash
 
-set -eu
 
 # TESTING code
 #
@@ -11,6 +10,9 @@ set -eu
 # To do
 # - Generate more random valid mac addresses by replacing the static '00' with pseudo-random code.
 #   But don't generate multicast and locally administered addresses.
+
+set -o errexit # exit script when a command fails
+set -o nounset # exit script when a variable is not set
 
 export RANDFILE=/etc/onion-node/.rnd;
 

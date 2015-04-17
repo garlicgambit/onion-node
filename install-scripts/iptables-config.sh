@@ -12,6 +12,9 @@
 # To Do:
 # - Nothing yet
 
+set -o errexit # exit script when a command fails
+set -o nounset # exit script when a variable is not set
+
 # Variables
 readonly IPTABLES=/sbin/iptables;
 readonly ECHO=/bin/echo;

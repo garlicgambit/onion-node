@@ -11,6 +11,9 @@
 # - might be better to add gpg key lookup to the relevant script,
 #   instead of centralized script
 
+set -o errexit # exit script when a command fails
+set -o nounset # exit script when a variable is not set
+
 # Variables
 readonly MIN_TIME=60;
 readonly MAX_TIME=300;

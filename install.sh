@@ -5,6 +5,9 @@
 # To do:
 # - Nothing yet 
 
+set -o errexit # exit script when a command fails
+set -o nounset # exit script when a variable is not set
+
 # Variables
 readonly DEFAULT_USER=pi;
 readonly BITCOIN_USER=bitcoinuser;
@@ -70,10 +73,16 @@ if [[ -r /etc/apt/apt.conf.d/50unattended-upgrades ]]; then
 fi
 
 # Remove user pi from 'adm' group
-deluser "${DEFAULT_USER}" adm;
+if id --groups --name "${DEFAULT_USER}" | grep -q adm; then
+  echo "Remove ${DEFAULT_USER} from adm group"
+  deluser "${DEFAULT_USER}" adm;
+fi
 
 # Create bitcoinuser - this user runs the bitcoind process
-useradd --create-home "${BITCOIN_USER}";
+if ! id "${BITCOIN_USER}" >> /dev/null; then
+  echo "Add ${BITCOIN_USER} to Onion Node"
+  useradd --create-home "${BITCOIN_USER}"
+fi
 
 # Lockdown bitcoinuser account - disable shell access and disable login
 usermod --shell /usr/sbin/nologin --lock --expiredate 1 "${BITCOIN_USER}";

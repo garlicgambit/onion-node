@@ -1,8 +1,9 @@
 #!/bin/bash
 
-set -eu
-
 # Automatically install system updates at a random interval
+
+set -o errexit # exit script when a command fails
+set -o nounset # exit script when a variable is not set
 
 # Variables
 
