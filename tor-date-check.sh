@@ -10,7 +10,8 @@ set -o errexit # exit script when a command fails
 set -o nounset # exit script when a variable is not set
 
 # Variables
-readonly PATH=$PATH:/etc/onion-node/;
+readonly ONION_DIR=/etc/onion-node;
+readonly ANONDATE_SCRIPT="${ONION_DIR}"/anondate
 readonly LOCK_DIR=/tmp/tor-bitcoin.lock/;
 
 
@@ -43,14 +44,14 @@ fi
 
 # Check if Tor has consensus and check if Tor has an invalid certificate date
 tries=0;
-while [[ $(anondate --has-consensus) == "false" ]] && [[ "${tries}" -lt 40 ]]; do
-  if [[ "$(anondate --tor-cert-lifetime-invalid | grep "wrong")" ]]; then
+while [[ $("${ANONDATE_SCRIPT}" --has-consensus) == "false" ]] && [[ "${tries}" -lt 40 ]]; do
+  if [[ "$("${ANONDATE_SCRIPT}" --tor-cert-lifetime-invalid | grep "wrong")" ]]; then
     echo "Time on Tor certificate NOT valid...setting time from Tor certificate";
     echo "Stopping Tor";
     /etc/init.d/tor stop;
     echo "Sleeping for 30 seconds to let the Tor process stop smoothly";
     sleep 30;
-    date -s "$(anondate --tor-cert-valid-after)";
+    date -s "$("${ANONDATE_SCRIPT}" --tor-cert-valid-after)";
     echo "New time is $(date +"%X %x")";
     echo "Removing old Tor logfile";
     rm -rf /var/log/tor/log;
@@ -78,7 +79,7 @@ while [[ $(anondate --has-consensus) == "false" ]] && [[ "${tries}" -lt 40 ]]; d
 done
 
 # Verify Tor time is in valid range
-if [[ "$(anondate --current-time-in-valid-range)" != "true" ]]; then
+if [[ "$("${ANONDATE_SCRIPT}" --current-time-in-valid-range)" != "true" ]]; then
   echo "System time to far off Tor consensus";
   echo "Stopping Tor";
   /etc/init.d/tor stop;
@@ -86,7 +87,7 @@ if [[ "$(anondate --current-time-in-valid-range)" != "true" ]]; then
   sleep 30;
   echo "Tor service stopped";
   echo "Setting new system time based on Tor consensus";
-  date -s "$(anondate --show-middle-range)";
+  date -s "$("${ANONDATE_SCRIPT}" --show-middle-range)";
   echo "New system time is set to Tor consensus";
   echo "Remove old Tor log files";
   rm -rf /var/log/tor/log;
