@@ -1,31 +1,28 @@
 #!/bin/bash
+#
+# Description:
+# This script is used to set (fresh) values in bitcoin.conf file
+#
+# TODO:
+# - Integrate while loop to check if /tmp/hidden_service/hostname exists with 'sed'ting the new hostname in the bitcoin.conf file
+# - A presumably 'stale' lockfile/LOCKDIR is removed after 2 hours. Look into a more elegant solution.
+#
 
+# Bash options
 set -o errexit # exit script when a command fails
 set -o nounset # exit script when a variable is not set
 
-# This script is used to set (fresh) values in bitcoin.conf file
-
-# To Do
-# - Integrate while loop to check if /tmp/hidden_service/hostname exists with 'sed'ting the new hostname in the bitcoin.conf file
-# - A presumably 'stale' lockfile/LOCKDIR is removed after 2 hours. Look into a more elegant solution.
-
-export RANDFILE=/etc/onion-node/.rnd;
 
 # Variables
+export RANDFILE=/etc/onion-node/.rnd;
 
 readonly ONION_DIR=/etc/onion-node;
 readonly BITCOIN_USER=bitcoinuser;
-# Location of bitcoin.conf file
-readonly BITCOIN_FILE=/home/"${BITCOIN_USER}"/.bitcoin/bitcoin.conf;
-
-# rpcpassword variables
-readonly OPENSSL_KEY="$(openssl rand -base64 48)";
-readonly NEW_RPC_PASSWORD="$(echo -n "${OPENSSL_KEY}" | sha256sum | head -c 64)";
-readonly OLD_RPC_PASSWORD=CHANGETHISPASSWORD;
-
-# externalip variables
+readonly BITCOIN_FILE=/home/"${BITCOIN_USER}"/.bitcoin/bitcoin.conf; # Location of bitcoin configuration file
+readonly OPENSSL_KEY="$(openssl rand -base64 48)"; # Generate pseudo-random base64 string
+readonly NEW_RPC_PASSWORD="$(echo -n "${OPENSSL_KEY}" | sha256sum | head -c 64)"; # Convert base64 string to alphanumeric characters
+readonly OLD_RPC_PASSWORD=CHANGETHISPASSWORD; # bitcoin.conf default rpc password
 readonly EXTERNAL_IP=externalip=;
-
 readonly LOCK_DIR=/tmp/tor-bitcoin.lock/;
 
 
