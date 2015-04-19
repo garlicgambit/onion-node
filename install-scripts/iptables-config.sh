@@ -1,19 +1,23 @@
 #!/bin/bash
-
+#
+# Description:
 # Configure iptables firewall
-
+#
 # What to expect from this configuration:
 # - Default deny policy
 # - Only accepts outbound Tor traffic from the 'debian-tor' user
 # - UDP port 53 (DNS) for the root user is redirected to a Tor DNSPort, this is to allow outbound Apt and Git traffic
 # - UDP port 67 (DHCP) for the root user allowed for outbound DHCP traffic
 # - TCP port 80 (HTTP) for the root user is redirected to a Tor Transport, this is to allow outbound Apt traffic
-
-# To Do:
+#
+# TODO:
 # - Nothing yet
+#
 
+# Bash options
 set -o errexit # exit script when a command fails
 set -o nounset # exit script when a variable is not set
+
 
 # Variables
 readonly IPTABLES=/sbin/iptables;
@@ -24,6 +28,7 @@ readonly TOR_TRANSPORT1=9550;
 readonly TOR_TRANSPORT2=9650; # Not in use
 readonly TOR_TRANSPORT3=9750; # Not in use
 readonly LAN_INT=eth0;
+
 
 # Flush iptables chains
 "${ECHO}" "Flush iptables chains";
