@@ -1,12 +1,17 @@
 #!/bin/bash
-
+#
+# Description:
 # Install Onion-node crontabs in /etc/crontab
+#
 
+# Bash options
 set -o errexit # exit script when a command fails
 set -o nounset # exit script when a variable is not set
 
+
 # Variables
 readonly ONION_DIR=/etc/onion-node;
+
 
 # Create backup original /etc/crontab file
 echo "Create a backup of the original /etc/crontab file";
