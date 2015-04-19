@@ -1,22 +1,25 @@
 #!/bin/bash
-
+#
+# Description:
 # Automatically reboot the system every 2-4 weeks
 # This is an unattended device, so a regular reboot might fix some system issues
-
-# To do:
+#
+# TODO:
 # - Nothing yet
+#
 
+# Bash options
 set -o errexit # exit script when a command fails
 set -o nounset # exit script when a variable is not set
 
-# Variables
 
-# 1209600 seconds is 2 weeks, 2419200 seconds is 4 weeks
-readonly MIN_TIME=1209600;
-readonly MAX_TIME=2419200;
+# Variables
+readonly MIN_TIME=1209600; # 1209600 seconds is 2 weeks
+readonly MAX_TIME=2419200; # 2419200 seconds is 4 weeks
 readonly RANDOM_TIME="$(shuf -i "${MIN_TIME}"-"${MAX_TIME}" -n 1)";
 readonly LOCK_DIR=/tmp/randomreboot.lock/;
 readonly LOCK_DIR2=/tmp/tor-bitcoin.lock/;
+
 
 # Set lockfile/dir - mkdir is atomic
 # For portability flock or other Linux only tools are not used
