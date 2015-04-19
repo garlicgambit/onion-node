@@ -1,14 +1,19 @@
 #!/bin/bash
-
+#
+# Description:
 # Install tlsdate from source
+#
 
+# Bash options
 set -o errexit # exit script when a command fails
 set -o nounset # exit script when a variable is not set
+
 
 # Variables
 readonly SRC_DIR=/usr/local/src/tlsdate;
 readonly TLSDATE_URL=https://www.github.com/ioerror/tlsdate.git;
 readonly LOCK_DIR=/tmp/tor-bitcoin.lock/;
+
 
 # Only run as root
 if [[ "$(id -u)" != "0" ]]; then
