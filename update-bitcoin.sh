@@ -1,10 +1,14 @@
 #!/bin/bash
-
+#
+# Description:
 # This script will update the Onion node to the latest stable Bitcoin release
 # It will update at a random 1 to 10 day interval
+#
 
+# Bash options
 set -o errexit # exit script when a command fails
 set -o nounset # exit script when a variable is not set
+
 
 # Variables
 readonly ONION_DIR=/etc/onion-dir;
@@ -12,9 +16,8 @@ readonly BITCOIN_INSTALL="${ONION_DIR}"/install-scripts/install-bitcoin.sh;
 readonly BITCOIN_SRC=/usr/local/src/bitcoin;
 readonly LOCK_DIR=/tmp/update-bitcoin.lock/;
 readonly LOCK_DIR2=/tmp/tor-bitcoin.lock/;
-# 86400 seconds is 1 day, 864000 seconds is 10 days
-readonly MIN_TIME=86400;
-readonly MAX_TIME=864000;
+readonly MIN_TIME=86400; # 864000 seconds is 1 day
+readonly MAX_TIME=864000; # 864000 seconds is 10 days
 readonly RANDOM_TIME="$(shuf -i "${MIN_TIME}"-"${MAX_TIME}" -n 1)";
 
 
