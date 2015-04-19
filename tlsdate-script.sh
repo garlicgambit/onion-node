@@ -1,22 +1,27 @@
 #!/bin/bash
-
-# Get time with tlsdate at random site at random time
-
-# Right now this is just a simple solution to get/set the current time from a list of remote sources at a random time
+#
+# Description:
+# Get time with tlsdate at random site at random time.
+# Right now this is just a simple solution to get/set the current time from a
+# list of remote sources at a random time.
 # Probably need to look around for other solutions like: sdwdate, bitcoin timeoffset, etc.
-
-# To Do
+#
+# TODO:
 # - Would like to add .onion websites
 # - Ask site owners for permission to add site to list
 # - Maybe add some dedicated sites/servers for time checking
-# - Might integrate with renewing tor/bitcoin .onion address, to prevent problems with availability Tor process, but this might make profiling easier. Try this for now.
-
-# ISSUES
+# - Might integrate with renewing tor/bitcoin .onion address, to prevent problems
+#   with availability Tor process, but this might make profiling easier. Try this for now.
+#
+# ISSUES:
 # - No sanity checking on time results
 # - Single point of failure; not checking time from multiple sources and comparing them
+#
 
+# Bash options
 set -o errexit # exit script when a command fails
 set -o nounset # exit script when a variable is not set
+
 
 # Only run as root
 if [[ "$(id -u)" != "0" ]]; then

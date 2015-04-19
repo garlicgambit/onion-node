@@ -1,15 +1,20 @@
 #!/bin/bash
-
+#
+# Description:
 # Control the bitcoind process
-
-# TODO
+#
+# TODO:
 # - Nothing yet...
+#
 
+# Bash options
 set -o errexit # exit script when a command fails
 set -o nounset # exit script when a variable is not set
 
+
 # Variables
 readonly BITCOIN_USER=bitcoinuser;
+
 
 # Check whether the bitcoind process is running
 if [[ "$(pgrep "bitcoind" >> /dev/null && echo "Running")" == "Running" ]]; then

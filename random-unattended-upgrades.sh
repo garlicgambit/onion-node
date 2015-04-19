@@ -1,17 +1,23 @@
 #!/bin/bash
-
+#
+# Description:
 # Automatically install system updates at a random interval
+#
+# TODO:
+# - Nothing yet...
+#
 
+# Bash options
 set -o errexit # exit script when a command fails
 set -o nounset # exit script when a variable is not set
 
-# Variables
 
-# 216000 seconds is 5 days
+# Variables
 readonly MIN_TIME=0;
-readonly MAX_TIME=216000;
+readonly MAX_TIME=216000; # 216000 seconds is 5 days
 readonly RANDOM_TIME="$(shuf -i "${MIN_TIME}"-"${MAX_TIME}" -n 1)";
 readonly LOCKDIR=/tmp/random-unattended-upgrades.lock/;
+
 
 # Set lockfile/dir - mkdir is atomic
 # For portability flock or other Linux only tools are not used

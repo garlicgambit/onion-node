@@ -1,8 +1,9 @@
 #!/bin/bash
-
+#
+# Description:
 # Download gpg keys
-
-# To Do
+#
+# TODO:
 # - check tlsdate gpg key
 # - check sks-keyservers.net key
 # - automatically refresh gpg keys: parcimonie
@@ -10,9 +11,12 @@
 # - use different Tor circuits for gpg key lookups: parcimonie
 # - might be better to add gpg key lookup to the relevant script,
 #   instead of centralized script
+#
 
+# Bash options
 set -o errexit # exit script when a command fails
 set -o nounset # exit script when a variable is not set
+
 
 # Variables
 readonly MIN_TIME=60;

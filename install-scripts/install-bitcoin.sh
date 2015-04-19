@@ -1,12 +1,16 @@
 #!/bin/bash
-
+#
+# Description:
 # Install bitcoin from source
-
-# To do:
+#
+# TODO:
 # - Automatically install latest stable bitcoin version
+#
 
+# Bash options
 set -o errexit # exit script when a command fails
 set -o nounset # exit script when a variable is not set
+
 
 # Variables
 readonly BITCOIN_VERSION=v0.10.0;

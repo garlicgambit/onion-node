@@ -1,12 +1,16 @@
 #!/bin/bash
-
+#
+# Description:
 # This script will configure a full Bitcoin onion node on a stock Raspbian install
-
-# To do:
+#
+# TODO:
 # - Nothing yet 
+#
 
+# Bash options
 set -o errexit # exit script when a command fails
 set -o nounset # exit script when a variable is not set
+
 
 # Variables
 readonly DEFAULT_USER=pi;
@@ -17,6 +21,7 @@ readonly CONFIG_FILES="${ONION_DIR}"/config-files;
 readonly INSTALL_SCRIPTS="${ONION_DIR}"/install-scripts;
 readonly APT_PACKAGE=macchanger; # This package should be installed with apt-install-packages.sh
 readonly LOCK_DIR=/tmp/tor-bitcoin.lock/;
+
 
 # Only run as root
 if [[ "$(id -u)" != "0" ]]; then

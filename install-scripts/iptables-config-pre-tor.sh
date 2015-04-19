@@ -1,24 +1,29 @@
 #!/bin/bash
-
+#
+# Description:
 # Configure temporary iptables firewall
 # This configuration will be replaced by the iptables-config.sh configuration after Tor is installed
-
+#
 # What to expect from this configuration:
 # - Default deny policy
 # - UDP port 53 (DNS) for the root user is allowed outbound for Apt traffic
 # - UDP port 67 (DHCP) for the root user allowed outbound for DHCP traffic
 # - TCP port 80 (HTTP) for the root user is allowed outbound for Apt traffic
-
-# To Do:
+#
+# TODO:
 # - Nothing yet
+#
 
+# Bash options
 set -o errexit # exit script when a command fails
 set -o nounset # exit script when a variable is not set
+
 
 # Variables
 readonly IPTABLES=/sbin/iptables;
 readonly ECHO=/bin/echo;
 readonly LAN_INT=eth0;
+
 
 # Flush iptables chains
 "${ECHO}" "Flush iptables chains";
