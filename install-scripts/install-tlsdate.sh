@@ -77,4 +77,3 @@ make clean;
 echo "tlsdate is installed";
 
 echo "tlsdate install script is done";
-rmdir "${LOCK_DIR}";
