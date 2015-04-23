@@ -20,7 +20,7 @@ readonly SRC_DIR=/usr/local/src/bitcoin;
 readonly BTC_URL=https://www.github.com/bitcoin/bitcoin.git;
 readonly SWAP_CONF=/etc/dphys-swapfile;
 readonly LOCK_DIR=/tmp/tor-bitcoin.lock/;
-
+readonly CPU_COUNT="$(nproc)"
 
 # Only run as root
 if [[ "$(id -u)" != "0" ]]; then
@@ -103,8 +103,20 @@ cd "${SRC_DIR}";
 git checkout "${BITCOIN_VERSION}";
 ./autogen.sh;
 ./configure --disable-wallet --without-gui --without-miniupnpc;
-# 3 threads instead of 4 - 3 is about 1/4 faster then 4 threads
-make -j3;
+
+# Determine number of CPU's and set the number of jobs for make.
+# Use 3 make jobs instead of 4. 3 jobs is about 1/4 faster then 4 jobs.
+if [[ "${CPU_COUNT}" -gt 1 ]]; then
+  echo "Number of available processors is: ${CPU_COUNT}"
+  MAKE_JOBS=$(( ${CPU_COUNT} -1 ))
+  echo "Building with ${CPU_COUNT} make jobs"
+else
+  echo "Number of available processors is: ${CPU_COUNT}"
+  MAKE_JOBS=$(( ${CPU_COUNT} ))
+  echo "Building with ${CPU_COUNT} make jobs"
+fi
+
+make --jobs "${MAKE_JOBS}";
 make install;
 make clean;
 echo "Bitcoin is installed";
