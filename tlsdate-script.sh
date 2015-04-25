@@ -25,22 +25,22 @@ set -o nounset # exit script when a variable is not set
 
 # Only run as root
 if [[ "$(id -u)" != "0" ]]; then
-  echo "ERROR: Must be run as root...exiting script";
-  exit 0;
+  echo "ERROR: Must be run as root...exiting script"
+  exit 0
 fi 
 
 # Check if tor is available 
 # We do not start the Tor process here, that is done with the refresh .onion address script
-tries=0;
+tries=0
 while [[ "$(pgrep "tor" -u debian-tor >> /dev/null && echo "Running")" != "Running" ]] && [[ "${tries}" -lt 8 ]]; do
-  echo "Tor is not running...waiting for 30 seconds";
-  sleep 30;
-  tries=$(( ${tries} +1 ));
+  echo "Tor is not running...waiting for 30 seconds"
+  sleep 30
+  tries=$(( ${tries} +1 ))
   if [[ "${tries}" -eq 8 ]]; then
-    echo "Tor is not running...checking at a later time...exiting script";
-    exit 0;
+    echo "Tor is not running...checking at a later time...exiting script"
+    exit 0
   fi 
-done;
+done
 
 # List of websites
 arr[0]="www.riseup.net"
@@ -80,21 +80,21 @@ arr[25]="www.xkcd.com"
 # + more...
 
 # tlsdate lookup - retry another host if lookup fails
-tries=0;
+tries=0
 while [[ "${tries}" -lt 10 ]]; do
-  RANDOM_NUMBER=$[ $RANDOM % 26 ];
-  RANDOM_DOMAIN=${arr["${RANDOM_NUMBER}"]};
-  echo "tlsdate lookup: "${RANDOM_DOMAIN}"";
-  /usr/local/bin/tlsdate -x socks5://127.0.0.1:9250 -H "${RANDOM_DOMAIN}" && break;
+  RANDOM_NUMBER=$[ $RANDOM % 26 ]
+  RANDOM_DOMAIN=${arr["${RANDOM_NUMBER}"]}
+  echo "tlsdate lookup: "${RANDOM_DOMAIN}""
+  /usr/local/bin/tlsdate -x socks5://127.0.0.1:9250 -H "${RANDOM_DOMAIN}" && break
   # Debug tlsdate command
-  #/usr/local/bin/tlsdate -n -v -V -x socks5://127.0.0.1:9250 -H "${RANDOM_DOMAIN}";
-  sleep 30;
-  tries=$(( ${tries} +1 ));
+  #/usr/local/bin/tlsdate -n -v -V -x socks5://127.0.0.1:9250 -H "${RANDOM_DOMAIN}"
+  sleep 30
+  tries=$(( ${tries} +1 ))
   if [[ "${tries}" -eq 10 ]]; then
-    echo "ERROR: The tlsdate lookup has failed.";
-    echo "The script will exit now.";
-    exit 0;
+    echo "ERROR: The tlsdate lookup has failed."
+    echo "The script will exit now."
+    exit 0
   fi
-done;
+done
 
-echo "Script is done";
+echo "Script is done"

@@ -10,10 +10,10 @@ set -o nounset # exit script when a variable is not set
 
 
 # Fetch updates
-apt-get update;
+apt-get update
 
 # Install updates
-apt-get upgrade -y;
+apt-get upgrade -y
 
 # Install Tor
-apt-get install -y tor;
+apt-get install -y tor
