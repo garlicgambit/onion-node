@@ -49,7 +49,7 @@ fi
 # Check if Tor has consensus and check if Tor has an invalid certificate date
 tries=0
 while [[ $("${ANONDATE_SCRIPT}" --has-consensus) == "false" ]] && [[ "${tries}" -lt 40 ]]; do
-  if [[ "$("${ANONDATE_SCRIPT}" --tor-cert-lifetime-invalid | grep "wrong")" ]]; then
+  if "${ANONDATE_SCRIPT}" --tor-cert-lifetime-invalid | grep --quiet "wrong"; then
     echo "Time on Tor certificate NOT valid...setting time from Tor certificate"
     echo "Stopping Tor"
     /etc/init.d/tor stop
