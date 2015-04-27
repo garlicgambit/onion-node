@@ -17,8 +17,8 @@ readonly BITCOIN_USER=bitcoinuser
 
 
 # Check whether the bitcoind process is running
-if [[ "$(pgrep "bitcoind" >> /dev/null && echo "Running")" == "Running" ]]; then
-  echo "Bitcoind process is running"
+if pgrep "bitcoind" >> /dev/null; then
+  echo "The bitcoind process is running."
 else
  echo "The bitcoind process is not running."
  exit 0
@@ -39,7 +39,7 @@ echo "Sent bitcoind process the stop signal"
 
 # Wait till the bitcoind process is gone - check for 30 minutes
 tries=0
-while [[ "$(pgrep "bitcoind" >> /dev/null && echo "Running")" == "Running" ]] && [[ "${tries}" -lt 60 ]]; do
+while pgrep "bitcoind" >> /dev/null && [[ "${tries}" -lt 60 ]]; do
   echo "bitcoind is still running...sleeping for 30 seconds"
   sleep 30
   tries=$(( ${tries} +1 ))
@@ -47,7 +47,7 @@ done
 
 # Kill the bitcoind process if it is still running at this stage
 tries=0
-while [[ "$(pgrep "bitcoind" >> /dev/null && echo "Running")" == "Running" ]] && [[ "${tries}" -lt 10 ]]; do
+while pgrep "bitcoind" >> /dev/null && [[ "${tries}" -lt 10 ]]; do
   echo "bitcoind process is still running at this late state...not a good sign...going to kill it nicely now"
   pkill bitcoind
   echo "Sleep for 30 seconds...and check again"
