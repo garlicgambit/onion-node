@@ -32,7 +32,7 @@ fi
 # Check if tor is available 
 # We do not start the Tor process here, that is done with the refresh .onion address script
 tries=0
-while [[ "$(pgrep "tor" -u debian-tor >> /dev/null && echo "Running")" != "Running" ]] && [[ "${tries}" -lt 8 ]]; do
+while ! pgrep "tor" -u "debian-tor" >> /dev/null && [[ "${tries}" -lt 8 ]]; do
   echo "Tor is not running...waiting for 30 seconds"
   sleep 30
   tries=$(( ${tries} +1 ))
