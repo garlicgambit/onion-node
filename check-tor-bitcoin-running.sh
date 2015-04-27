@@ -25,7 +25,7 @@ fi
 
 # Check if Tor process is running - start Tor if it's not running
 # Only proceed if no lockfile is set
-if [[ "$(pgrep "tor" -u debian-tor >> /dev/null && echo "Running")" != "Running" ]]; then
+if ! pgrep "tor" -u "debian-tor" >> /dev/null; then
   if mkdir "${LOCK_DIR}"; then
     trap 'rmdir "${LOCK_DIR}"; exit' INT TERM EXIT
     echo "Successfully acquired lock on "${LOCK_DIR}""
@@ -41,7 +41,7 @@ fi
 
 # Check if bitcoind process is running - start bitcoind if it's not running
 # Only proceed if no lockfile is set
-if [[ "$(pgrep "bitcoind" >> /dev/null && echo "Running")" != "Running" ]]; then
+if ! pgrep "bitcoind" >> /dev/null; then
   if mkdir "${LOCK_DIR}"; then
     trap 'rmdir "${LOCK_DIR}"; exit' INT TERM EXIT
     echo "Successfully acquired lock on "${LOCK_DIR}""
