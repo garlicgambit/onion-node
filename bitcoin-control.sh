@@ -26,7 +26,7 @@ fi
 
 # Check wether the bitcoind process is ready to receive stop command - check for 30 minutes
 tries=0
-while [[ "$(sudo -u "${BITCOIN_USER}" bitcoin-cli getinfo |grep "version" >> /dev/null && echo "Running")" != "Running" ]] && [[ "${tries}" -lt 60 ]]; do
+while ! sudo -u "${BITCOIN_USER}" bitcoin-cli getinfo >> /dev/null && [[ "${tries}" -lt 60 ]]; do
   echo "bitcoin-cli is not ready to accept commands...sleeping for 30 seconds"
   sleep 30
   tries=$(( ${tries} +1 ))
