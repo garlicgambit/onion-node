@@ -11,7 +11,7 @@ set -o nounset # exit script when a variable is not set
 
 
 # Variables
-readonly ONION_DIR=/etc/onion-dir
+readonly ONION_DIR=/etc/onion-node
 readonly BITCOIN_INSTALL="${ONION_DIR}"/install-scripts/install-bitcoin.sh
 readonly BITCOIN_SRC=/usr/local/src/bitcoin
 readonly LOCK_DIR=/tmp/update-bitcoin.lock/
@@ -28,17 +28,16 @@ if [[ "$(id -u)" != "0" ]]; then
 fi
 
 # Set lockfile/dir - mkdir is atomic
-# For portability flock or other Linux only tools are not used
 if mkdir "${LOCK_DIR}"; then
-  trap 'rmdir "${LOCK_DIR}"; exit' INT TERM EXIT # remove LOCKDIR when script is interrupted, terminated or finished
-  echo "Successfully acquired lock on "${LOCK_DIR}""
+  trap 'rmdir "${LOCK_DIR}"; exit' INT TERM EXIT # remove LOCK_DIR when script is interrupted, terminated or finished
+  echo "Successfully acquired lock on ${LOCK_DIR}"
 else
-  echo "Failed to acquire lock on "${LOCK_DIR}""
+  echo "Failed to acquire lock on ${LOCK_DIR}"
   exit 0
 fi
 
 # Sleep for 1-10 days
-echo "Sleeping for "${RANDOM_TIME}" seconds"
+echo "Sleeping for ${RANDOM_TIME} seconds"
 sleep "${RANDOM_TIME}"
 
 # Check if other processes are running at this point
@@ -50,19 +49,18 @@ sleep "${RANDOM_TIME}"
 # Check if a lockfile/LOCKDIR2 exists, wait max 2 hours
 tries=0
 while [[ -d "${LOCK_DIR2}" ]] && [[ "${tries}" -lt 120 ]]; do
-  echo "Temporarily not able to acquire lock on "${LOCK_DIR2}""
+  echo "Temporarily not able to acquire lock on ${LOCK_DIR2}"
   echo "Other processes might be running...retry in 60 seconds"
   sleep 60
   tries=$(( ${tries} +1 ))
 done
 
 # Set lockfile/dir - mkdir is atomic
-# For portability flock or other Linux only tools are not used
 if mkdir "${LOCK_DIR2}"; then
-  trap 'rmdir "${LOCK_DIR2}"; exit' INT TERM EXIT # remove LOCKDIR2 when script is interrupted, terminated or finished
-  echo "Successfully acquired lock on "${LOCK_DIR2}""
+  trap 'rmdir "${LOCK_DIR}"; rmdir "${LOCK_DIR2}"; exit' INT TERM EXIT # remove LOCK_DIR2 when script is interrupted, terminated or finished
+  echo "Successfully acquired lock on ${LOCK_DIR2}"
 else
-  echo "Failed to acquire lock on "${LOCK_DIR2}""
+  echo "Failed to acquire lock on ${LOCK_DIR2}"
   exit 0
 fi
 
@@ -91,8 +89,8 @@ while [[ "${tries}" -lt 10 ]]; do
 done
 
 # Select latest Onion node release/tag
-LATEST_TAG=$(git describe --tags $(git revc-list --tags --max-count=1))
-echo "Latest tag: "${LATEST_TAG}""
+LATEST_TAG=$(git describe --tags $(git rev-list --tags --max-count=1))
+echo "Latest tag: ${LATEST_TAG}"
 
 # Verify latest Onion node release/tag
 cd "${ONION_DIR}"
