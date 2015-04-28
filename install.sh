@@ -44,7 +44,7 @@ sleep 3
 # Check if a lockfile/LOCKDIR exists, wait max 2 hours
 tries=0
 while [[ -d "${LOCK_DIR}" ]] && [[ "${tries}" -lt 120 ]]; do
-  echo "Temporarily not able to acquire lock on "${LOCK_DIR}""
+  echo "Temporarily not able to acquire lock on ${LOCK_DIR}"
   echo "Other processes might be running...retry in 60 seconds"
   sleep 60
   tries=$(( ${tries} +1 ))
@@ -54,9 +54,9 @@ done
 # For portability flock or other Linux only tools are not used
 if mkdir "${LOCK_DIR}"; then
   trap 'rmdir "${LOCK_DIR}"; exit' INT TERM EXIT # remove LOCKDIR when script is interrupted, terminated or finished
-  echo "Successfully acquired lock on "${LOCK_DIR}""
+  echo "Successfully acquired lock on ${LOCK_DIR}"
 else
-  echo "Failed to acquire lock on "${LOCK_DIR}""
+  echo "Failed to acquire lock on ${LOCK_DIR}"
   echo "The installation script failed...run the install.sh script again to see if you get better results."
   echo "Tip: Reboot the system if the installation keeps failling."
   exit 0
@@ -176,7 +176,7 @@ rmdir "${LOCK_DIR}" # tor-date-check.sh has it's own lockfile
 # Check if a lockfile/LOCKDIR exists, wait max 2 hours
 tries=0
 while [[ -d "${LOCK_DIR}" ]] && [[ "${tries}" -lt 120 ]]; do
-  echo "Temporarily not able to acquire lock on "${LOCK_DIR}""
+  echo "Temporarily not able to acquire lock on ${LOCK_DIR}"
   echo "Other processes might be running...retry in 60 seconds"
   sleep 60
   tries=$(( ${tries} +1 ))
@@ -186,9 +186,9 @@ done
 # For portability flock or other Linux only tools are not used
 if mkdir "${LOCK_DIR}"; then
   trap 'rmdir "${LOCK_DIR}"; exit' INT TERM EXIT # remove LOCKDIR when script is interrupted, terminated or finished
-  echo "Successfully acquired lock on "${LOCK_DIR}""
+  echo "Successfully acquired lock on ${LOCK_DIR}"
 else
-  echo "Failed to acquire lock on "${LOCK_DIR}""
+  echo "Failed to acquire lock on ${LOCK_DIR}"
   echo "The installation script failed...run the install.sh script again to see if you get better results."
   echo "Tip: Reboot the system if the installation keeps failling."
   exit 0
@@ -200,12 +200,12 @@ fi
 # Hopefully apt will work in a later run...
 tries=0
 while [[ ! $(dpkg-query -W "${APT_PACKAGE}" 2>/dev/null ) ]] && [[ "${tries}" -lt 20 ]]; do
-  echo ""${APT_PACKAGE}" is not installed...will run apt-install-packages.sh"
+  echo "${APT_PACKAGE} is not installed...will run apt-install-packages.sh"
   "${INSTALL_SCRIPTS}"/apt-install-packages.sh
   sleep 30
   tries=$(( ${tries} +1 ))
   if [[ $tries -eq 20 ]]; then
-    echo "ERROR: "${APT_PACKAGE}" is not installed"
+    echo "ERROR: ${APT_PACKAGE} is not installed"
     echo "The installation has failed...probably due to network/Tor issues"
     echo "Check network/Tor connection and run the installer again and see if you get better results"
     echo "The installation is aborted"
@@ -223,7 +223,7 @@ rmdir "${LOCK_DIR}" # install-tlsdate.sh has it's own lockfile
 # Check if a lockfile/LOCKDIR exists, wait max 2 hours
 tries=0
 while [[ -d "${LOCK_DIR}" ]] && [[ "${tries}" -lt 120 ]]; do
-  echo "Temporarily not able to acquire lock on "${LOCK_DIR}""
+  echo "Temporarily not able to acquire lock on ${LOCK_DIR}"
   echo "Other processes might be running...retry in 60 seconds"
   sleep 60
   tries=$(( ${tries} +1 ))
@@ -233,9 +233,9 @@ done
 # For portability flock or other Linux only tools are not used
 if mkdir "${LOCK_DIR}"; then
   trap 'rmdir "${LOCK_DIR}"; exit' INT TERM EXIT # remove LOCKDIR when script is interrupted, terminated or finished
-  echo "Successfully acquired lock on "${LOCK_DIR}""
+  echo "Successfully acquired lock on ${LOCK_DIR}"
 else
-  echo "Failed to acquire lock on "${LOCK_DIR}""
+  echo "Failed to acquire lock on ${LOCK_DIR}"
   echo "The installation script failed...run the install.sh script again to see if you get better results."
   echo "Tip: Reboot the system if the installation keeps failling."
   exit 0
@@ -248,7 +248,7 @@ rmdir "${LOCK_DIR}" # install-bitcoin.sh has it's own lockfile
 # Check if a lockfile/LOCKDIR exists, wait max 2 hours
 tries=0
 while [[ -d "${LOCK_DIR}" ]] && [[ "${tries}" -lt 120 ]]; do
-  echo "Temporarily not able to acquire lock on "${LOCK_DIR}""
+  echo "Temporarily not able to acquire lock on ${LOCK_DIR}"
   echo "Other processes might be running...retry in 60 seconds"
   sleep 60
   tries=$(( ${tries} +1 ))
@@ -258,9 +258,9 @@ done
 # For portability flock or other Linux only tools are not used
 if mkdir "${LOCK_DIR}"; then
   trap 'rmdir "${LOCK_DIR}"; exit' INT TERM EXIT # remove LOCKDIR when script is interrupted, terminated or finished
-  echo "Successfully acquired lock on "${LOCK_DIR}""
+  echo "Successfully acquired lock on ${LOCK_DIR}"
 else
-  echo "Failed to acquire lock on "${LOCK_DIR}""
+  echo "Failed to acquire lock on ${LOCK_DIR}"
   echo "The installation script failed...run the install.sh script again to see if you get better results."
   echo "Tip: Reboot the system if the installation keeps failling."
   exit 0
