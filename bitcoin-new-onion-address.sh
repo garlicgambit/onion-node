@@ -35,14 +35,14 @@ fi
 # Check if a lockfile/LOCKDIR exists, wait max 2 hours to remove 'stale' lockfile and exit script
 tries=0
 while [[ -d "${LOCK_DIR}" ]] && [[ "${tries}" -lt 120 ]]; do
-  echo "Temporarily not able to acquire lock on "${LOCK_DIR}""
+  echo "Temporarily not able to acquire lock on ${LOCK_DIR}"
   echo "Other processes might be running...retry in 60 seconds"
   sleep 60
   tries=$(( ${tries} +1 ))
   if [[ $tries -eq 120 ]]; then
-    echo "ERROR: After 2 hours the "${LOCK_DIR}" still exists"
+    echo "ERROR: After 2 hours the ${LOCK_DIR} still exists"
     echo "Not a good sign"
-    echo "Removing presumably stale "${LOCK_DIR}""
+    echo "Removing presumably stale ${LOCK_DIR}"
     rmdir "${LOCK_DIR}"
   fi
 done
@@ -51,9 +51,9 @@ done
 # For portability flock or other Linux only tools are not used
 if mkdir "${LOCK_DIR}"; then
   trap 'rmdir "${LOCK_DIR}"; exit' INT TERM EXIT # remove LOCKDIR when script is interrupted, terminated or finished
-  echo "Successfully acquired lock on "${LOCK_DIR}""
+  echo "Successfully acquired lock on ${LOCK_DIR}"
 else
-  echo "Failed to acquire lock on "${LOCK_DIR}""
+  echo "Failed to acquire lock on ${LOCK_DIR}"
   exit 0
 fi
 
@@ -92,11 +92,11 @@ while [[ ! -r /tmp/hidden_service/hostname ]] && [[ "${tries}" -lt 10 ]]; do
 done
 
 # Change rpcpassword
-sed -i "s/"${OLD_RPC_PASSWORD}"/"${NEW_RPC_PASSWORD}"/" "${BITCOIN_FILE}"
+sed -i "s/${OLD_RPC_PASSWORD}/${NEW_RPC_PASSWORD}/" "${BITCOIN_FILE}"
 
 # Change externalip
-TORHOSTNAME="$( </tmp/hidden_service/hostname )"
-sed -i "s,^\("$EXTERNALIP"\).*,\1"$TORHOSTNAME"," "${BITCOIN_FILE}"
+tor_hostname="$( </tmp/hidden_service/hostname )"
+sed -i "s,^\(${EXTERNAL_IP}\).*,\1${tor_hostname}," "${BITCOIN_FILE}"
 
 # Start bitcoin process again
 echo "Starting bitcoind process"
