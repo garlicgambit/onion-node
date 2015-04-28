@@ -23,14 +23,14 @@ readonly LOCK_DIR=/tmp/random-unattended-upgrades.lock/
 # For portability flock or other Linux only tools are not used
 if mkdir "${LOCK_DIR}"; then
   trap 'rmdir "${LOCK_DIR}"; exit' INT TERM EXIT # remove LOCKDIR when script is interrupted, terminated or finished
-  echo "Successfully acquired lock on "${LOCK_DIR}""
+  echo "Successfully acquired lock on ${LOCK_DIR}"
 else
-  echo "Failed to acquire lock on "${LOCK_DIR}""
+  echo "Failed to acquire lock on ${LOCK_DIR}"
   exit 0
 fi
 
 # Random sleep
-echo "Sleeping for "${RANDOM_TIME}" seconds"
+echo "Sleeping for ${RANDOM_TIME} seconds"
 sleep "${RANDOM_TIME}"
 
 # Update repositories
