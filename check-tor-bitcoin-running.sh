@@ -28,13 +28,13 @@ fi
 if ! pgrep "tor" -u "debian-tor" >> /dev/null; then
   if mkdir "${LOCK_DIR}"; then
     trap 'rmdir "${LOCK_DIR}"; exit' INT TERM EXIT
-    echo "Successfully acquired lock on "${LOCK_DIR}""
+    echo "Successfully acquired lock on ${LOCK_DIR}"
     echo "Tor is not running...starting Tor"
     /etc/init.d/tor start
     sleep 30
     rmdir "${LOCK_DIR}"
   else
-    echo "Failed to acquire lock on "${LOCK_DIR}""
+    echo "Failed to acquire lock on ${LOCK_DIR}"
     exit 0
   fi
 fi
@@ -44,12 +44,12 @@ fi
 if ! pgrep "bitcoind" >> /dev/null; then
   if mkdir "${LOCK_DIR}"; then
     trap 'rmdir "${LOCK_DIR}"; exit' INT TERM EXIT
-    echo "Successfully acquired lock on "${LOCK_DIR}""
+    echo "Successfully acquired lock on ${LOCK_DIR}"
     echo "bitcoind is not running...starting bitcoind"
     sudo -u "${BITCOIN_USER}" bitcoind -daemon >> /dev/null
     rmdir "${LOCK_DIR}"
   else
-    echo "Failed to acquire lock on "${LOCK_DIR}""
+    echo "Failed to acquire lock on ${LOCK_DIR}"
     exit 0
   fi
 fi
