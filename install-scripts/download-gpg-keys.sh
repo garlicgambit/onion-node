@@ -39,7 +39,7 @@ while [[ "${tries}" -lt 10 ]]; do
 done
 
 # Sleep for 60-300 seconds between gpg key lookups
-echo "Sleeping for "${RANDOM_TIME}" seconds"
+echo "Sleeping for ${RANDOM_TIME} seconds"
 sleep "${RANDOM_TIME}"
 
 # Download gpg key Bitcoin developer - Wladimir J. van der Laan
