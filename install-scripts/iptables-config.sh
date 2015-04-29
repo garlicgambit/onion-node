@@ -22,7 +22,7 @@ set -o nounset # exit script when a variable is not set
 # Variables
 readonly IPTABLES=/sbin/iptables
 readonly ECHO=/bin/echo
-readonly TOR_UID=`id -u debian-tor`
+readonly TOR_UID=$(id -u debian-tor)
 readonly TOR_DNS_PORT=9053
 readonly TOR_TRANSPORT1=9550
 readonly TOR_TRANSPORT2=9650 # Not in use
