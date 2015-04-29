@@ -13,7 +13,7 @@ set -o nounset # exit script when a variable is not set
 readonly SRC_DIR=/usr/local/src/tlsdate
 readonly TLSDATE_URL=https://www.github.com/ioerror/tlsdate.git
 readonly LOCK_DIR=/tmp/tor-bitcoin.lock/
-
+readonly CPU_COUNT="$(nproc)"
 
 # Only run as root
 if [[ "$(id -u)" != "0" ]]; then
@@ -70,7 +70,19 @@ echo "Installing tlsdate"
 cd "${SRC_DIR}"
 ./autogen.sh
 ./configure
-make -j3
+
+# Determine number of CPU's and set the number of jobs for make.
+if [[ "${CPU_COUNT}" -gt 1 ]]; then
+  echo "Number of available processors is: ${CPU_COUNT}"
+  make_jobs=$(( ${CPU_COUNT} -1 ))
+  echo "Building with ${CPU_COUNT} make jobs"
+else
+  echo "Number of available processors is: ${CPU_COUNT}"
+  make_jobs=$(( ${CPU_COUNT} ))
+  echo "Building with ${CPU_COUNT} make jobs"
+fi
+
+make --jobs "${make_jobs}"
 make install
 make clean
 echo "tlsdate is installed"
