@@ -36,7 +36,7 @@ else
 fi
 
 # Only run when tor is running
-if pgrep "tor" -u "debian-tor" >> /dev/null ]]; then
+if pgrep "tor" -u "debian-tor" >> /dev/null; then
   echo "Tor is running"
 else
   echo "Tor is not running...starting tor"
