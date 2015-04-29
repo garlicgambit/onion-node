@@ -85,9 +85,9 @@ while [[ "${tries}" -lt 10 ]]; do
   random_number=$(( $RANDOM % 26 ))
   random_domain=${arr["${random_number}"]}
   echo "tlsdate lookup: ${random_domain}"
-  /usr/local/bin/tlsdate --proxy socks5://127.0.0.1:9250 --host "${random_domain}" && break
+  /usr/local/bin/tlsdate -x socks5://127.0.0.1:9250 -H "${random_domain}" && break
   # Debug tlsdate command
-  #/usr/local/bin/tlsdate --dont-set-clock --verbose --showtime --proxy socks5://127.0.0.1:9250 --host "${random_domain}" && break
+  #/usr/local/bin/tlsdate --dont-set-clock --verbose --showtime -x socks5://127.0.0.1:9250 -H "${random_domain}" && break
   sleep 30
   tries=$(( ${tries} +1 ))
   if [[ "${tries}" -eq 10 ]]; then
