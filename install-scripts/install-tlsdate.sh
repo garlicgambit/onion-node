@@ -75,11 +75,11 @@ cd "${SRC_DIR}"
 if [[ "${CPU_COUNT}" -gt 1 ]]; then
   echo "Number of available processors is: ${CPU_COUNT}"
   make_jobs=$(( ${CPU_COUNT} -1 ))
-  echo "Building with ${CPU_COUNT} make jobs"
+  echo "Building with ${make_jobs} make jobs"
 else
   echo "Number of available processors is: ${CPU_COUNT}"
   make_jobs=$(( ${CPU_COUNT} ))
-  echo "Building with ${CPU_COUNT} make jobs"
+  echo "Building with ${make_jobs} make jobs"
 fi
 
 make --jobs "${make_jobs}"
