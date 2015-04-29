@@ -38,12 +38,11 @@ while [[ -d "${LOCK_DIR}" ]] && [[ "${tries}" -lt 30 ]]; do
 done
 
 # Set lockfile/dir - mkdir is atomic
-# For portability flock or other Linux only tools are not used
 if mkdir "${LOCK_DIR}"; then
-  trap 'rmdir "${LOCK_DIR}"; exit' INT TERM EXIT # remove LOCKDIR when script is interrupted, terminated or finished
+  trap 'rmdir "${LOCK_DIR}"; exit' INT TERM EXIT # remove LOCK_DIR when script is interrupted, terminated or finished
   echo "Successfully acquired lock on ${LOCK_DIR}"
 else
-  echo "Failed to acquire lock on "${LOCK_DIR}""
+  echo "Failed to acquire lock on ${LOCK_DIR}"
   echo "The installation script failed...run the install.sh script again to see if you get better results."
   echo "Tip: Reboot the system if the installation keeps failling."
   exit 0
@@ -108,15 +107,15 @@ git checkout "${BITCOIN_VERSION}"
 # Use 3 make jobs instead of 4. 3 jobs is about 1/4 faster then 4 jobs.
 if [[ "${CPU_COUNT}" -gt 1 ]]; then
   echo "Number of available processors is: ${CPU_COUNT}"
-  MAKE_JOBS=$(( ${CPU_COUNT} -1 ))
+  make_jobs=$(( ${CPU_COUNT} -1 ))
   echo "Building with ${CPU_COUNT} make jobs"
 else
   echo "Number of available processors is: ${CPU_COUNT}"
-  MAKE_JOBS=$(( ${CPU_COUNT} ))
+  make_jobs=$(( ${CPU_COUNT} ))
   echo "Building with ${CPU_COUNT} make jobs"
 fi
 
-make --jobs "${MAKE_JOBS}"
+make --jobs "${make_jobs}"
 make install
 make clean
 echo "Bitcoin is installed"
