@@ -4,12 +4,13 @@ Unattended-Upgrade::Origins-Pattern {
         // Note that this will silently match a different release after
         // migration to the specified archive (e.g. testing becomes the
         // new stable).
-// manual edit - uncommented stable branch
 //      "o=Raspbian,a=stable";
-        "o=Raspbian,a=stable";
 //      "o=Raspbian,a=stable-updates";
 //      "o=Raspbian,a=proposed-updates";
-        "origin=Raspbian,archive=stable,label=Raspbian-Security";
+//        "origin=Raspbian,archive=stable,label=Raspbian-Security";
+// manual edit -  add stable and oldstable archive/releases
+      "origin=Raspbian,archive=stable";
+      "origin=Raspbian,archive=oldstable";
 };
 
 // List of packages to not update

@@ -13,8 +13,11 @@
 ## https://www.torproject.org/docs/faq#torrc
 
 
-############## Bitcoin node settings ##############
+############## Onion node settings ##############
 
+## Description:
+## This file changes some preferences in the default Tor configuration file.
+##
 ## To Do:
 ## - Check whether stream isolation options like 'IsolateDestAddr' and 'IsolateDestPort' are preferred/acceptable for bitcoin traffic
 ## - Check whether mixing hidden service ports for the bitcoind process has additional privacy/security benefits
