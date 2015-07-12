@@ -13,7 +13,7 @@ set -o nounset # exit script when a variable is not set
 
 
 # Variables
-readonly BITCOIN_VERSION=v0.10.1
+readonly BITCOIN_VERSION=v0.11.0
 readonly ONION_DIR=/etc/onion-node
 readonly GPG_KEYS="${ONION_DIR}"/install-scripts/download-gpg-keys.sh
 readonly SRC_DIR=/usr/local/src/bitcoin
